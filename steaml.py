@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 import streamlit as st
 import pandas as pd
-from fbprophet import Prophet
+from prophet import Prophet
 import matplotlib.pyplot as plt
 from nsepy import get_history
 
@@ -44,7 +44,7 @@ def main():
         df = load_data(symbol, timeframe)
         if not df.empty:
             model = train_model(df)
-            forecast_periods = st.slider("Select Number of Forecast Periods", min_value=1, max_value=365, value=30)
+            forecast_periods = st.slider("Select Number of Forecast Periods", min_value=1, max_value=365, value=3)
             future = model.make_future_dataframe(periods=forecast_periods)
             forecast = predict(model, future)
             display_results(df, forecast)
