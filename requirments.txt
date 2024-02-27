@@ -3,3 +3,9 @@ streamlit
 pandas
 prophet
 matplotlib
+streamlit
+click
+yfinance
+pandas
+prophet
+matplotlib
