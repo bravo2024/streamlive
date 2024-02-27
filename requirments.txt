@@ -1,0 +1,5 @@
+nsepy
+streamlit
+pandas
+prophet
+matplotlib
