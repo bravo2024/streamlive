@@ -6,18 +6,21 @@ import plotly.graph_objects as go
 import yfinance as yf
 
 # Function to load stock data using Yahoo Finance
+# Function to load stock data using Yahoo Finance
 def load_data(symbol, timeframe, periods):
     end_date = datetime.now()
     start_date = end_date - timedelta(days=365)  # Get 1 year of historical data
     
-    # Retrieve historical data with a length of at least 100
-    while True:
-        data = yf.download(symbol, start=start_date, end=end_date, interval=timeframe)
-        if len(data) >= 50:
-            break
-        start_date -= timedelta(days=30)  # Try again with a previous month if not enough data
+    data_chunks = []
+    while len(data_chunks) < periods:
+        chunk_end_date = start_date + timedelta(days=7)
+        chunk_data = yf.download(symbol, start=start_date, end=min(chunk_end_date, end_date), interval=timeframe)
+        data_chunks.append(chunk_data)
+        start_date += timedelta(days=7)
     
-    return data
+    data = pd.concat(data_chunks)
+    return data[-100:]
+
 
 # Function to train Prophet model
 def train_model(df):
