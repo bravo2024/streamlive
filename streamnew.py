@@ -283,8 +283,8 @@ def generate_signal_plots(df):
     # Calculate indicators
 
     st.write(df.tail(4))
-    if 'Date' not in df.columns or 'Close' not in df.columns:
-        st.error("DataFrame must contain 'Date' and 'Close' columns.")
+    if 'Close' not in df.columns:
+        st.error("DataFrame must contain a 'Close' column.")
         return
 
     # Calculate indicators
@@ -311,14 +311,14 @@ def generate_signal_plots(df):
     st.write("### Signal Plots")
     for col in ['SMA_20', 'EMA_50', 'RSI_14', 'MACD', 'Stochastic', 'CCI', 'ATR']:
         plt.figure(figsize=(10, 5))
-        plt.plot(df['Date'], df[col], label=col)
+        plt.plot(df.index, df[col], label=col)
         for index, row in df.iterrows():
             if row['Signal'] == 'Buy':
-                plt.scatter(row['Date'], row[col], color='green', label='Buy', marker='^', s=100)
+                plt.scatter(index, row[col], color='green', label='Buy', marker='^', s=100)
             elif row['Signal'] == 'Sell':
-                plt.scatter(row['Date'], row[col], color='red', label='Sell', marker='v', s=100)
+                plt.scatter(index, row[col], color='red', label='Sell', marker='v', s=100)
             else:
-                plt.scatter(row['Date'], row[col], color='blue', label='Hold', marker='o', s=50)
+                plt.scatter(index, row[col], color='blue', label='Hold', marker='o', s=50)
         plt.title(f'{col} with Buy/Sell/Hold Signals')
         plt.xlabel('Date')
         plt.ylabel(col)
