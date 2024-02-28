@@ -10,4 +10,4 @@ pandas
 prophet
 matplotlib
 plotly
-TA-Lib
+ta-lib-bin
