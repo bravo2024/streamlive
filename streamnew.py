@@ -4,7 +4,7 @@ import pandas as pd
 from prophet import Prophet
 import plotly.graph_objects as go
 import yfinance as yf
-import numpy
+import numpy as np
 import talib as ta
 # Function to load stock data using Yahoo Finance
 # Function to load stock data using Yahoo Finance
@@ -215,42 +215,30 @@ def apply_leading_indicators(df):
     # Initialize a DataFrame to hold buy/sell signals for each indicator
     signals_df = pd.DataFrame(index=df.index)
     
+    # Apply color formatting to the DataFrame based on buy/sell signals
     # Buy/sell conditions for SMA_20
-    signals_df['SMA_20_Buy'] = (df['SMA_20'] > df['EMA_50']) & (df['RSI_14'] < 30) & (df['MACD'] > df['MACD_Signal'])
-    signals_df['SMA_20_Sell'] = (df['SMA_20'] < df['EMA_50']) & (df['RSI_14'] > 70) & (df['MACD'] < df['MACD_Signal'])
+    signals_df['SMA_20'] = np.where((df['SMA_20'] > df['EMA_50']) & (df['RSI_14'] < 30) & (df['MACD'] > df['MACD_Signal']), st.color_picker("color: green"), st.color_picker("color: red"))
     
     # Buy/sell conditions for EMA_50
-    signals_df['EMA_50_Buy'] = (df['EMA_50'] > df['SMA_20']) & (df['RSI_14'] < 30) & (df['MACD'] > df['MACD_Signal'])
-    signals_df['EMA_50_Sell'] = (df['EMA_50'] < df['SMA_20']) & (df['RSI_14'] > 70) & (df['MACD'] < df['MACD_Signal'])
+    signals_df['EMA_50'] = np.where((df['EMA_50'] > df['SMA_20']) & (df['RSI_14'] < 30) & (df['MACD'] > df['MACD_Signal']), st.color_picker("color: green"), st.color_picker("color: red"))
     
     # Buy/sell conditions for RSI_14
-    signals_df['RSI_14_Buy'] = (df['RSI_14'] < 30) & (df['MACD'] > df['MACD_Signal'])
-    signals_df['RSI_14_Sell'] = (df['RSI_14'] > 70) & (df['MACD'] < df['MACD_Signal'])
+    signals_df['RSI_14'] = np.where((df['RSI_14'] < 30) & (df['MACD'] > df['MACD_Signal']), st.color_picker("color: green"), st.color_picker("color: red"))
     
     # Buy/sell conditions for MACD
-    signals_df['MACD_Buy'] = (df['MACD'] > df['MACD_Signal'])
-    signals_df['MACD_Sell'] = (df['MACD'] < df['MACD_Signal'])
+    signals_df['MACD'] = np.where((df['MACD'] > df['MACD_Signal']), st.color_picker("color: green"), st.color_picker("color: red"))
     
     # Buy/sell conditions for Stochastic
-    signals_df['Stochastic_Buy'] = (df['Stochastic'] < 20)
-    signals_df['Stochastic_Sell'] = (df['Stochastic'] > 80)
+    signals_df['Stochastic'] = np.where((df['Stochastic'] < 20), st.color_picker("color: green"), st.color_picker("color: red"))
     
     # Buy/sell conditions for CCI
-    signals_df['CCI_Buy'] = (df['CCI'] < -100)
-    signals_df['CCI_Sell'] = (df['CCI'] > 100)
+    signals_df['CCI'] = np.where((df['CCI'] < -100), st.color_picker("color: green"), st.color_picker("color: red"))
     
     # Buy/sell conditions for ATR
-    signals_df['ATR_Buy'] = (df['Close'] > df['SMA_20'] * 0.995) & (df['Close'] > df['EMA_50'] * 0.995) & (df['Close'] > df['Close'].shift(1)) & (df['ATR'] > df['Close'] * 0.01)
-    signals_df['ATR_Sell'] = (df['Close'] < df['SMA_20'] * 1.005) & (df['Close'] < df['EMA_50'] * 1.005) & (df['Close'] < df['Close'].shift(1)) & (df['ATR'] > df['Close'] * 0.01)
+    signals_df['ATR'] = np.where((df['Close'] > df['SMA_20'] * 0.995) & (df['Close'] > df['EMA_50'] * 0.995) & (df['Close'] > df['Close'].shift(1)) & (df['ATR'] > df['Close'] * 0.01), st.color_picker("color: green"), st.color_picker("color: red"))
 
-    # Map buy/sell signals to colors
-    color_map = {True: 'background-color: #00FF00', False: 'background-color: #FF0000'}
-    
-    # Apply color formatting to the signals DataFrame
-    signals_df_styled = signals_df.applymap(lambda x: color_map[x])
-    
     # Combine the original DataFrame with the styled signals DataFrame
-    result_df = pd.concat([df[['Close', 'SMA_20', 'EMA_50', 'RSI_14', 'MACD', 'MACD_Signal', 'Stochastic', 'CCI', 'ATR']], signals_df_styled], axis=1)
+    result_df = pd.concat([df[['Date', 'Close', 'SMA_20', 'EMA_50', 'RSI_14', 'MACD', 'MACD_Signal', 'Stochastic', 'CCI', 'ATR']], signals_df], axis=1)
     
     return result_df
 
