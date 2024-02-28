@@ -173,8 +173,8 @@ def apply_leading_indicators(df):
     # Calculate indicators
     df['SMA_20'] = ta.SMA(df['Close'], timeperiod=20)
     df['EMA_50'] = ta.EMA(df['Close'], timeperiod=50)
-    df['RSI_14'] = ta.momentum.rsi(df['Close'], window=14)
-    df['MACD'], df['MACD Signal'], _ = ta.trend.macd(df['Close'])
+    df['RSI_14'] = ta.RSI(df['Close'], timeperiod=14)
+    df['MACD'], df['MACD Signal'], _ = ta.MACD(df['Close'])
 
     # Generate buy/sell signals based on indicator values
     df['Signal'] = 'Hold'
