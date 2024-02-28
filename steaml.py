@@ -176,16 +176,11 @@ def generate_signal_table(signals):
     color_map = {'Buy': 'green', 'Sell': 'red', 'Hold': 'gray'}
     signal_df['Color'] = signal_df['Signal'].map(color_map)
     
-    # Create a Streamlit table
-    st.subheader('Buy/Sell Signals for Leading and Lagging Indicators')
-    st.markdown("""<style>
-                table td:nth-child(3) {
-                    color: white;
-                    font-weight: bold;
-                    text-align: center;
-                }
-                </style>""", unsafe_allow_html=True)  # Apply style to the table
-    st.table(signal_df.style.apply(lambda row: f'background-color: {row.Color}', axis=1))
+    # Apply style to the table
+    signal_df_styled = signal_df.style.apply(lambda row: f'background-color: {row.Color}', axis=1)
+    
+    return signal_df_styled
+
 
 
 
@@ -232,7 +227,9 @@ def main():
                 ('Stochastic Oscillator', 'Sell'),
                 ('Bollinger Bands', 'Hold')
             ]
-            generate_signal_table(signals)
+            signal_df_styled = generate_signal_table(signals)
+            st.subheader('Buy/Sell Signals for Leading and Lagging Indicators')
+            st.write(signal_df_styled)
 
 if __name__ == "__main__":
     main()
