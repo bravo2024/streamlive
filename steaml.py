@@ -135,6 +135,7 @@ def main():
     
     #symbol = st.text_input("Enter Stock Symbol (e.g., AAPL for Apple Inc.):")
     symbols = [
+        '^NSEI',
         'BHARTIARTL.NS', 'HDFCLIFE.NS', 'BRITANNIA.NS', 'TCS.NS', 'LTIM.NS',
         'ITC.NS', 'CIPLA.NS', 'TECHM.NS', 'NTPC.NS', 'BAJFINANCE.NS',
         'BAJAJFINSV.NS', 'HINDALCO.NS', 'LT.NS', 'NESTLEIND.NS', 'HEROMOTOCO.NS',
