@@ -8,21 +8,21 @@ import yfinance as yf
 # Function to load stock data using Yahoo Finance
 # Function to load stock data using Yahoo Finance
 # Function to load stock data using Yahoo Finance
+# Function to load stock data using Yahoo Finance
 def load_data(symbol, timeframe, periods):
     end_date = datetime.now()
-    start_date = end_date - timedelta(days=365)  # Get 1 year of historical data
+    if timeframe in ['1m', '5m', '15m', '30m', '1h']:  # Intraday timeframes
+        start_date = end_date - timedelta(days=1)  # 1 day of data
+    elif timeframe == '1d':
+        start_date = end_date - timedelta(days=periods)  # Number of days selected by the user
+    elif timeframe == '1wk':
+        start_date = end_date - timedelta(weeks=periods)  # Number of weeks selected by the user
+    elif timeframe == '1mo':
+        start_date = end_date - relativedelta(months=periods)  # Number of months selected by the user
     
-    data_chunks = []
-    while len(data_chunks) < periods:
-        chunk_end_date = start_date + timedelta(days=7)
-        chunk_end_date = min(chunk_end_date, end_date)  # Ensure chunk end date is not after the end date
-        if chunk_end_date > start_date:
-            chunk_data = yf.download(symbol, start=start_date, end=chunk_end_date, interval=timeframe)
-            data_chunks.append(chunk_data)
-        start_date += timedelta(days=7)
-    
-    data = pd.concat(data_chunks)
-    return data[-100:]
+    data = yf.download(symbol, start=start_date, end=end_date, interval=timeframe)
+    return data
+
 
 
 
