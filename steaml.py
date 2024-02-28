@@ -49,10 +49,12 @@ def train_model(df):
 # Function to make predictions with Prophet model
 # Function to make predictions with Prophet model
 # Function to make predictions with Prophet model
+# Function to make predictions with Prophet model
 def predict(model, future, floor_percentage=0.05):
     forecast = model.predict(future)
-    max_close = forecast['yhat'].max()  # Maximum forecasted close value
-    floor_value = max(0, floor_percentage * max_close)  # Floor value as a percentage of the maximum value
+    recent_data = forecast[forecast['ds'] > forecast['ds'].max() - pd.Timedelta(days=7)]  # Recent data (last 7 days)
+    min_close = recent_data['yhat'].min()  # Minimum forecasted close value in the recent data
+    floor_value = max(0.01, floor_percentage * min_close)  # Minimum floor value as 0.01 or a percentage of the minimum value
     forecast['yhat'] = forecast['yhat'].apply(lambda x: max(x, floor_value))
     return forecast
 
