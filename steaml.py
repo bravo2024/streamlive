@@ -107,7 +107,7 @@ def display_last_values(df, forecast):
     last_predicted.rename(columns={'ds': 'Predicted Date', 'yhat': 'Predicted Close'}, inplace=True)
 
     # Reset index of the DataFrames
-    last_actual.reset_index(drop=True, inplace=True)
+   
     last_predicted.reset_index(drop=True, inplace=True)
 
     # Display last 10 actual closing values with dates and last 20 predicted closing values in separate columns
