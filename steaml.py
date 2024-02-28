@@ -13,7 +13,7 @@ def load_data(symbol, timeframe, periods):
     # Retrieve historical data with a length of at least 100
     while True:
         data = yf.download(symbol, start=start_date, end=end_date, interval=timeframe)
-        if len(data) >= 100:
+        if len(data) >= 50:
             break
         start_date -= timedelta(days=30)  # Try again with a previous month if not enough data
     
