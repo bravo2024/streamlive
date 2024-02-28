@@ -418,7 +418,7 @@ def main():
             display_last_values(df, forecast,future_periods,timeframe,model)
             # signal_table = apply_leading_indicators(df)
             # st.table(signal_table)
-            generate_signal_plots(df)
+            generate_signal_plot(df)
             #signals = [
               ##  ('RSI', 'Sell'),
                # ('Moving Average', 'Buy'),
