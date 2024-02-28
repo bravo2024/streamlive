@@ -133,7 +133,7 @@ def display_last_values(df, forecast, future_periods, timeframe):
         last_predicted = forecast
 
     # Extract last 20 predicted closing prices
-    last_predicted = last_predicted[['ds', 'yhat']].tail(future_periods)
+    last_predicted = last_predicted[['ds', 'yhat']].tail(20)  # Always extract last 20 values
 
     # Calculate buy/sell signal
     signal_df = calculate_signal(df, forecast, future_periods)
@@ -156,6 +156,7 @@ def display_last_values(df, forecast, future_periods, timeframe):
     future_predicted.rename(columns={'ds': 'Future Date', 'yhat': 'Future Predicted Close'}, inplace=True)
     st.subheader(f'Future {future_periods} Predicted Closing Values')
     st.write(future_predicted)
+
 
 
 
