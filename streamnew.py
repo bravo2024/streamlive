@@ -326,7 +326,7 @@ def apply_leading_indicators(df):
         plt.xticks(rotation=45)
         st.pyplot(plt)
 '''
-  def generate_signal_plot(df):
+def generate_signal_plot(df):
     """
     Calculate leading indicators including SMA, EMA, RSI, MACD, and additional indicators suitable for smaller time frames.
     Generate buy/sell signals based on indicator values.
