@@ -86,15 +86,9 @@ def display_results(df, forecast):
 
     fig = go.Figure()
     fig.add_trace(go.Candlestick(x=df.index, open=df['Open'], high=df['High'], low=df['Low'], close=df['Close'], name='Actual'))
-    fig.add_trace(go.Scatter(x=forecast['ds'][:len(df)], y=forecast['yhat'][:len(df)], mode='lines', name='Predicted'))
+    fig.add_trace(go.Scatter(x=forecast['ds'], y=forecast['yhat'], mode='lines', name='Predicted'))
     fig.update_layout(title='Actual vs. Predicted Closing Prices')
-
-    # Create a DataFrame with actual and predicted values
-    results_df = pd.DataFrame({'Date': df.index, 'Actual': df['Close'], 'Predicted': forecast['yhat'][:len(df)]})
-
-    # Display actual and predicted values in columns below the plot
-    st.subheader('Actual vs. Predicted Values')
-    st.write(results_df)
+    #st.plotly_chart(fig)
     
     return fig
 
