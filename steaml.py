@@ -98,32 +98,30 @@ def display_results(df, forecast):
 
 
 def display_last_values(df, forecast):
-    last_actual = df[['Date', 'Close']].tail(10)
+    if 'Date' in df.columns:
+        last_actual = df[['Date', 'Close']].tail(10)
+    elif 'Datetime' in df.columns:
+        last_actual = df[['Datetime', 'Close']].tail(10)
+    else:
+        st.error("No 'Date' or 'Datetime' column found in the DataFrame.")
+        return
 
-    # Extract last 10 predicted closing prices and shift by one row to align with actual values
-    last_predicted = forecast[['ds', 'yhat']].tail(10).shift(1)
+    # Extract last 20 predicted closing prices
+    last_predicted = forecast[['ds', 'yhat']].tail(20)
 
-    # Merge last actual and predicted values on the 'ds' column
-    last_values = pd.merge(last_actual, last_predicted, how='left', left_on='Date', right_on='ds')
+    # Rename columns for clarity
+    last_predicted.rename(columns={'ds': 'Predicted Date', 'yhat': 'Predicted Close'}, inplace=True)
 
-    # Drop the redundant 'ds' column
-    last_values.drop(columns='ds', inplace=True)
+    # Reset index of the DataFrames
+    last_actual.reset_index(drop=True, inplace=True)
+    last_predicted.reset_index(drop=True, inplace=True)
 
-    # Rename columns
-    last_values.rename(columns={'Close': 'Actual', 'yhat': 'Predicted'}, inplace=True)
+    # Display last 10 actual closing values with dates and last 20 predicted closing values in separate columns
+    st.subheader('Last 10 Actual Closing Values')
+    st.write(last_actual)
 
-    # Reset index of the DataFrame
-    last_values.reset_index(drop=True, inplace=True)
-
-    # Display last 10 actual and corresponding predicted values in a single table
-    st.subheader('Last 10 Actual and Predicted Values')
-    st.write(last_values)
-
-    # Display next 10 predicted values
-    future_predicted = forecast[['ds', 'yhat']].tail(10)
-    st.subheader('Future 10 Predicted Values')
-    st.write(future_predicted)
-
+    st.subheader('Last 20 Predicted Closing Values')
+    st.write(last_predicted)
 
 
 def main():
