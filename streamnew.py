@@ -226,21 +226,16 @@ def apply_leading_indicators(df):
     sell_condition = (df['SMA_20'] < df['EMA_50']) & (df['RSI_14'] < 70) & (df['MACD'] < df['MACD_Signal'])
     df.loc[sell_condition, 'Signal'] = 'Sell'
 
-    # Extract only the indicator columns
-    indicators_df = df[['SMA_20', 'EMA_50', 'RSI_14', 'MACD', 'Stochastic', 'CCI', 'ATR']]
+    # Extract only the indicator columns and 'Close' price
+    indicators_close_df = df[['Close', 'SMA_20', 'EMA_50', 'RSI_14', 'MACD', 'Stochastic', 'CCI', 'ATR']]
 
     # Calculate correlation matrix
-    corr_matrix = indicators_df.corr()
+    corr_matrix = indicators_close_df.corr()
 
     # Plot heatmap with buy/sell/hold annotations
-    st.write("### Correlation Heatmap with Buy/Sell/Hold Annotations")
+    st.write("### Correlation Heatmap with 'Close' Price")
     fig, ax = plt.subplots()
     heatmap = ax.imshow(corr_matrix, cmap='coolwarm', interpolation='nearest')
-
-    # Add buy/sell/hold annotations
-    for i in range(len(indicators_df.columns)):
-        for j in range(len(indicators_df.columns)):
-            text = ax.text(j, i, f"{corr_matrix.iloc[i, j]:.2f}\n{df['Signal'].iloc[j]}", ha="center", va="center", color="black")
 
     # Customize ticks and labels
     ax.set_xticks(range(len(corr_matrix.columns)))
@@ -255,10 +250,11 @@ def apply_leading_indicators(df):
     plt.colorbar(heatmap)
 
     # Add title
-    plt.title('Correlation Heatmap of Leading Indicators with Buy/Sell/Hold Annotations')
+    plt.title('Correlation Heatmap of Leading Indicators with \'Close\' Price')
 
     # Show the plot
     st.pyplot(fig)
+
 
 
 def main():
