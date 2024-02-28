@@ -22,7 +22,7 @@ def train_model(df):
         df = df.rename(columns={'Datetime': 'ds', 'Close': 'y'})
     elif 'DATE' in df.columns:
         df = df.rename(columns={'DATE': 'ds', 'Close': 'y'})
-
+    st.write(df.columns)
     # Check if 'ds' column contains datetime objects
     if isinstance(df['ds'].iloc[0], pd.Timestamp):
         df['ds'] = df['ds'].dt.tz_localize(None)  # Remove timezone information if present
