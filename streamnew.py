@@ -6,6 +6,10 @@ import plotly.graph_objects as go
 import yfinance as yf
 import numpy as np
 import talib as ta
+import matplotlib.pyplot as plt
+
+
+
 # Function to load stock data using Yahoo Finance
 # Function to load stock data using Yahoo Finance
 # Function to load stock data using Yahoo Finance
@@ -201,7 +205,7 @@ def apply_leading_indicators(df):
     - DataFrame: DataFrame with added indicators, buy/sell signals, and their values.
     """
     # Calculate indicators
-    df['SMA_20'] = ta.SMA(df['Close'], timeperiod=20)
+   df['SMA_20'] = ta.SMA(df['Close'], timeperiod=20)
     df['EMA_50'] = ta.EMA(df['Close'], timeperiod=50)
     df['RSI_14'] = ta.RSI(df['Close'], timeperiod=14)
     df['MACD'], df['MACD_Signal'], _ = ta.MACD(df['Close'])
@@ -211,24 +215,44 @@ def apply_leading_indicators(df):
     df['CCI'] = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=20)
     df['ATR'] = ta.ATR(df['High'], df['Low'], df['Close'], timeperiod=14)
 
-    # Initialize a DataFrame to hold buy/sell signals for each indicator
-    signals_df = pd.DataFrame(index=df.index)
-    
-    # Apply color formatting to the DataFrame based on buy/sell signals
-    # Buy/sell conditions for each indicator
-    indicators = ['SMA_20', 'EMA_50', 'RSI_14', 'MACD', 'Stochastic', 'CCI', 'ATR']
-    for indicator in indicators:
-        if indicator in df.columns:
-            signals_df[indicator] = np.where((df[indicator] > 0), 1, 0)
+    # Generate buy/sell signals based on indicator values
+    df['Signal'] = 'Hold'
+    # Example: Buy when SMA_20 crosses above EMA_50, RSI > 30, and MACD > Signal
+    buy_condition = (df['SMA_20'] > df['EMA_50']) & (df['RSI_14'] > 30) & (df['MACD'] > df['MACD_Signal'])
+    df.loc[buy_condition, 'Signal'] = 'Buy'
+    # Example: Sell when SMA_20 crosses below EMA_50, RSI < 70, and MACD < Signal
+    sell_condition = (df['SMA_20'] < df['EMA_50']) & (df['RSI_14'] < 70) & (df['MACD'] < df['MACD_Signal'])
+    df.loc[sell_condition, 'Signal'] = 'Sell'
 
-    # Combine the original DataFrame with the styled signals DataFrame
-    result_df = pd.concat([df[['Close', 'SMA_20', 'EMA_50', 'RSI_14', 'MACD', 'MACD_Signal', 'Stochastic', 'CCI', 'ATR']], signals_df], axis=1)
-    
-    # Apply styling to DataFrame based on buy/sell signals
-    styled_df = result_df.style.applymap(lambda x: 'background-color: green' if x == 1 else 'background-color: white')
-    
-    # Display the styled DataFrame using st.dataframe
-    st.dataframe(styled_df, height=800)
+    # Extract only the indicator columns
+    indicators_df = df[['SMA_20', 'EMA_50', 'RSI_14', 'MACD', 'Stochastic', 'CCI', 'ATR']]
+
+    # Calculate correlation matrix
+    corr_matrix = indicators_df.corr()
+
+    # Plot heatmap
+    fig, ax = plt.subplots()
+    heatmap = ax.imshow(corr_matrix, cmap='coolwarm', interpolation='nearest')
+
+    # Customize ticks and labels
+    ax.set_xticks(range(len(corr_matrix.columns)))
+    ax.set_yticks(range(len(corr_matrix.index)))
+    ax.set_xticklabels(corr_matrix.columns)
+    ax.set_yticklabels(corr_matrix.index)
+
+    # Rotate the tick labels and set their alignment
+    plt.setp(ax.get_xticklabels(), rotation=45, ha="right", rotation_mode="anchor")
+
+    # Add color bar
+    plt.colorbar(heatmap)
+
+    # Add title
+    plt.title('Correlation Heatmap of Leading Indicators')
+
+    # Show the plot
+    st.pyplot(fig)
+
+
 
 def main():
     st.title("Live Stock Analysis")
