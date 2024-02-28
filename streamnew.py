@@ -281,6 +281,8 @@ def generate_signal_plots(df):
     - None
     """
     # Calculate indicators
+
+    st.write(df.tail(4))
     if 'Date' not in df.columns or 'Close' not in df.columns:
         st.error("DataFrame must contain 'Date' and 'Close' columns.")
         return
