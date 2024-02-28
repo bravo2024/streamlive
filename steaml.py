@@ -21,7 +21,7 @@ def train_model(df):
     if 'Datetime' in df.columns:
         df = df.rename(columns={'Datetime': 'ds', 'Close': 'y'})
     elif 'DATE' in df.columns:
-        df = df.rename(columns={'DATE': 'ds', 'Close': 'y'})
+        df = df.rename(columns={'Date': 'ds', 'Close': 'y'})
     st.write(df.columns)
     # Check if 'ds' column contains datetime objects
     if isinstance(df['ds'].iloc[0], pd.Timestamp):
