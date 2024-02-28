@@ -98,14 +98,19 @@ def display_results(df, forecast):
 
 
 def display_last_values(df, forecast):
-    last_actual = df[['Close']].tail(10)
+    last_actual = df[['Date', 'Close']].tail(10)
 
     # Extract last 10 predicted closing prices and shift by one row to align with actual values
     last_predicted = forecast[['ds', 'yhat']].tail(10).shift(1)
 
-    # Concatenate last actual and predicted values
-    last_values = pd.concat([last_actual.rename(columns={'Close': 'Actual'}), 
-                             last_predicted.rename(columns={'ds': 'Date', 'yhat': 'Predicted'})], axis=1)
+    # Merge last actual and predicted values on the 'ds' column
+    last_values = pd.merge(last_actual, last_predicted, how='left', left_on='Date', right_on='ds')
+
+    # Drop the redundant 'ds' column
+    last_values.drop(columns='ds', inplace=True)
+
+    # Rename columns
+    last_values.rename(columns={'Close': 'Actual', 'yhat': 'Predicted'}, inplace=True)
 
     # Reset index of the DataFrame
     last_values.reset_index(drop=True, inplace=True)
