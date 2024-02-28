@@ -41,6 +41,16 @@ def predict(model, future):
     return forecast
 
 # Function to display results
+#def display_results(df, forecast):
+  #  fig = go.Figure()
+   # fig.add_trace(go.Candlestick(x=df.index,
+ #                   open=df['Open'],
+#                    high=df['High'],
+ #                   low=df['Low'],
+ #                   close=df['Close'], name='Actual'))
+ #   fig.add_trace(go.Scatter(x=forecast['ds'], y=forecast['yhat'], mode='lines', name='Predicted'))
+ #   fig.update_layout(title='Actual vs. Predicted Closing Prices')
+ #   st.plotly_chart(fig)
 def display_results(df, forecast):
     fig = go.Figure()
     fig.add_trace(go.Candlestick(x=df.index,
@@ -50,7 +60,7 @@ def display_results(df, forecast):
                     close=df['Close'], name='Actual'))
     fig.add_trace(go.Scatter(x=forecast['ds'], y=forecast['yhat'], mode='lines', name='Predicted'))
     fig.update_layout(title='Actual vs. Predicted Closing Prices')
-    st.plotly_chart(fig)
+    return fig
 
 def main():
     st.title("Live Stock Analysis")
@@ -67,6 +77,7 @@ def main():
                 future = model.make_future_dataframe(periods=10, freq='D')  # Adjust periods and frequency as needed
             forecast = predict(model, future)
             display_results(df, forecast)
+            st.plotly_chart(fig)
 
 if __name__ == "__main__":
     main()
