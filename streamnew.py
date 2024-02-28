@@ -207,7 +207,7 @@ def apply_leading_indicators(df):
     - DataFrame: DataFrame with added indicators, buy/sell signals, and their values.
     """
     # Calculate indicators
-    df['SMA_20'] = ta.SMA(df['Close'], timeperiod=20)
+  df['SMA_20'] = ta.SMA(df['Close'], timeperiod=20)
     df['EMA_50'] = ta.EMA(df['Close'], timeperiod=50)
     df['RSI_14'] = ta.RSI(df['Close'], timeperiod=14)
     df['MACD'], df['MACD_Signal'], _ = ta.MACD(df['Close'])
@@ -226,16 +226,19 @@ def apply_leading_indicators(df):
     sell_condition = (df['SMA_20'] < df['EMA_50']) & (df['RSI_14'] < 70) & (df['MACD'] < df['MACD_Signal'])
     df.loc[sell_condition, 'Signal'] = 'Sell'
 
-    # Extract only the indicator columns and 'Close' price
-    indicators_close_df = df[['Close', 'SMA_20', 'EMA_50', 'RSI_14', 'MACD', 'Stochastic', 'CCI', 'ATR']]
+    # Extract only the indicator columns and 'Signal'
+    indicators_signal_df = df[['SMA_20', 'EMA_50', 'RSI_14', 'MACD', 'Stochastic', 'CCI', 'ATR', 'Signal']]
+
+    # Replace buy/sell/hold with numeric values
+    indicators_signal_df['Signal'] = indicators_signal_df['Signal'].replace({'Buy': 1, 'Sell': -1, 'Hold': 0})
 
     # Calculate correlation matrix
-    corr_matrix = indicators_close_df.corr()
+    corr_matrix = indicators_signal_df.corr()
 
     # Plot heatmap with buy/sell/hold annotations
-    st.write("### Correlation Heatmap with 'Close' Price")
+    st.write("### Signal Heatmap")
     fig, ax = plt.subplots()
-    heatmap = ax.imshow(corr_matrix, cmap='coolwarm', interpolation='nearest')
+    heatmap = ax.imshow(corr_matrix, cmap='coolwarm', interpolation='nearest', vmin=-1, vmax=1)
 
     # Customize ticks and labels
     ax.set_xticks(range(len(corr_matrix.columns)))
@@ -250,7 +253,17 @@ def apply_leading_indicators(df):
     plt.colorbar(heatmap)
 
     # Add title
-    plt.title('Correlation Heatmap of Leading Indicators with \'Close\' Price')
+    plt.title('Signal Heatmap')
+
+    # Add buy/sell/hold annotations
+    for i in range(len(corr_matrix.index)):
+        for j in range(len(corr_matrix.columns)):
+            if corr_matrix.iloc[i, j] == 1:
+                text = ax.text(j, i, 'Buy', ha='center', va='center', color='white')
+            elif corr_matrix.iloc[i, j] == -1:
+                text = ax.text(j, i, 'Sell', ha='center', va='center', color='white')
+            else:
+                text = ax.text(j, i, 'Hold', ha='center', va='center', color='black')
 
     # Show the plot
     st.pyplot(fig)
