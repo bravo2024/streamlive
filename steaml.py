@@ -102,8 +102,8 @@ def display_last_values(df, forecast):
     last_actual = df[['Close']].tail(10)
 
     # Extract last 10 predicted closing prices and shift by one row to align with actual values
-    last_predicted = forecast[['ds', 'yhat']].tail(11).shift(-1)
-
+    last_predicted = forecast[['ds', 'yhat']].tail(10).shift(1)
+    
     # Extract next 10 predicted closing prices
     future_predicted = forecast[['ds', 'yhat']].tail(10)
 
