@@ -47,8 +47,9 @@ def train_model(df):
     return model
 
 # Function to make predictions with Prophet model
-def predict(model, future):
+def predict(model, future, floor_value=0):
     forecast = model.predict(future)
+    forecast['yhat'] = forecast['yhat'].apply(lambda x: max(x, floor_value))
     return forecast
 
 # Function to display results
