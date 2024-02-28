@@ -201,7 +201,7 @@ def apply_leading_indicators(df):
     - DataFrame: DataFrame with added indicators, buy/sell signals, and their values.
     """
     # Calculate indicators
-    df['SMA_20'] = ta.SMA(df['Close'], timeperiod=20)
+   df['SMA_20'] = ta.SMA(df['Close'], timeperiod=20)
     df['EMA_50'] = ta.EMA(df['Close'], timeperiod=50)
     df['RSI_14'] = ta.RSI(df['Close'], timeperiod=14)
     df['MACD'], df['MACD_Signal'], _ = ta.MACD(df['Close'])
@@ -212,45 +212,47 @@ def apply_leading_indicators(df):
     df['ATR'] = ta.ATR(df['High'], df['Low'], df['Close'], timeperiod=14)
 
     # Generate buy/sell signals based on indicator values
-    df['Signal_SMA_20'] = 'Hold'
-    df['Signal_EMA_50'] = 'Hold'
-    df['Signal_RSI_14'] = 'Hold'
-    df['Signal_MACD'] = 'Hold'
-    df['Signal_Stochastic'] = 'Hold'
-    df['Signal_CCI'] = 'Hold'
-    df['Signal_ATR'] = 'Hold'
+    # Initialize a DataFrame to hold buy/sell signals for each indicator
+    signals_df = pd.DataFrame(index=df.index)
     
-    # SMA_20 buy/sell signals
-    df.loc[df['Close'] > df['SMA_20'], 'Signal_SMA_20'] = 'Buy'
-    df.loc[df['Close'] < df['SMA_20'], 'Signal_SMA_20'] = 'Sell'
+    # Buy/sell conditions for SMA_20
+    signals_df['SMA_20_Buy'] = (df['SMA_20'] > df['EMA_50']) & (df['RSI_14'] < 30) & (df['MACD'] > df['MACD_Signal'])
+    signals_df['SMA_20_Sell'] = (df['SMA_20'] < df['EMA_50']) & (df['RSI_14'] > 70) & (df['MACD'] < df['MACD_Signal'])
     
-    # EMA_50 buy/sell signals
-    df.loc[df['Close'] > df['EMA_50'], 'Signal_EMA_50'] = 'Buy'
-    df.loc[df['Close'] < df['EMA_50'], 'Signal_EMA_50'] = 'Sell'
+    # Buy/sell conditions for EMA_50
+    signals_df['EMA_50_Buy'] = (df['EMA_50'] > df['SMA_20']) & (df['RSI_14'] < 30) & (df['MACD'] > df['MACD_Signal'])
+    signals_df['EMA_50_Sell'] = (df['EMA_50'] < df['SMA_20']) & (df['RSI_14'] > 70) & (df['MACD'] < df['MACD_Signal'])
     
-    # RSI_14 buy/sell signals
-    df.loc[df['RSI_14'] < 30, 'Signal_RSI_14'] = 'Buy'
-    df.loc[df['RSI_14'] > 70, 'Signal_RSI_14'] = 'Sell'
+    # Buy/sell conditions for RSI_14
+    signals_df['RSI_14_Buy'] = (df['RSI_14'] < 30) & (df['MACD'] > df['MACD_Signal'])
+    signals_df['RSI_14_Sell'] = (df['RSI_14'] > 70) & (df['MACD'] < df['MACD_Signal'])
     
-    # MACD buy/sell signals
-    df.loc[(df['MACD'] > df['MACD_Signal']) & (df['MACD'] > 0), 'Signal_MACD'] = 'Buy'
-    df.loc[(df['MACD'] < df['MACD_Signal']) & (df['MACD'] < 0), 'Signal_MACD'] = 'Sell'
+    # Buy/sell conditions for MACD
+    signals_df['MACD_Buy'] = (df['MACD'] > df['MACD_Signal'])
+    signals_df['MACD_Sell'] = (df['MACD'] < df['MACD_Signal'])
     
-    # Stochastic buy/sell signals
-    df.loc[df['Stochastic'] < 20, 'Signal_Stochastic'] = 'Buy'
-    df.loc[df['Stochastic'] > 80, 'Signal_Stochastic'] = 'Sell'
+    # Buy/sell conditions for Stochastic
+    signals_df['Stochastic_Buy'] = (df['Stochastic'] < 20)
+    signals_df['Stochastic_Sell'] = (df['Stochastic'] > 80)
     
-    # CCI buy/sell signals
-    df.loc[df['CCI'] < -100, 'Signal_CCI'] = 'Buy'
-    df.loc[df['CCI'] > 100, 'Signal_CCI'] = 'Sell'
+    # Buy/sell conditions for CCI
+    signals_df['CCI_Buy'] = (df['CCI'] < -100)
+    signals_df['CCI_Sell'] = (df['CCI'] > 100)
     
-    # ATR buy/sell signals
-    df.loc[df['Close'] > df['Close'].shift(1) + df['ATR'] * 0.5, 'Signal_ATR'] = 'Buy'
-    df.loc[df['Close'] < df['Close'].shift(1) - df['ATR'] * 0.5, 'Signal_ATR'] = 'Sell'
+    # Buy/sell conditions for ATR
+    signals_df['ATR_Buy'] = (df['Close'] > df['SMA_20'] * 0.995) & (df['Close'] > df['EMA_50'] * 0.995) & (df['Close'] > df['Close'].shift(1)) & (df['ATR'] > df['Close'] * 0.01)
+    signals_df['ATR_Sell'] = (df['Close'] < df['SMA_20'] * 1.005) & (df['Close'] < df['EMA_50'] * 1.005) & (df['Close'] < df['Close'].shift(1)) & (df['ATR'] > df['Close'] * 0.01)
 
-    return df[['Close', 'SMA_20', 'EMA_50', 'RSI_14', 'MACD', 'MACD_Signal', 'Stochastic', 'CCI', 'ATR',
-               'Signal_SMA_20', 'Signal_EMA_50', 'Signal_RSI_14', 'Signal_MACD', 'Signal_Stochastic',
-               'Signal_CCI', 'Signal_ATR']]
+    # Map buy/sell signals to colors
+    color_map = {True: 'background-color: #00FF00', False: 'background-color: #FF0000'}
+    
+    # Apply color formatting to the signals DataFrame
+    signals_df_styled = signals_df.applymap(lambda x: color_map[x])
+    
+    # Combine the original DataFrame with the styled signals DataFrame
+    result_df = pd.concat([df[['Close', 'SMA_20', 'EMA_50', 'RSI_14', 'MACD', 'MACD_Signal', 'Stochastic', 'CCI', 'ATR']], signals_df_styled], axis=1)
+    
+    return result
 
 
 def main():
