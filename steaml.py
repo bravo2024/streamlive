@@ -97,25 +97,16 @@ def display_results(df, forecast):
     return fig
 
 
-def display_last_values(df, forecast):
-    
-
-    # Extract last 20 predicted closing prices
-    #last_predicted = forecast[['ds', 'yhat']].tail(20)
+def display_last_values(df, forecast, future_periods):
+    # Extract future predicted closing prices
+    future_predicted = forecast[['ds', 'yhat']].tail(future_periods)
 
     # Rename columns for clarity
-    #last_predicted.rename(columns={'ds': 'Predicted Date', 'yhat': 'Predicted Close'}, inplace=True)
-    forecast_renamed=forecast.rename(columns={'ds': 'Predicted Date'})
-    # Reset index of the DataFrames
-   
-    #last_predicted.reset_index(drop=True, inplace=True)
+    future_predicted.rename(columns={'ds': 'Future Date', 'yhat': 'Future Predicted Close'}, inplace=True)
 
-    # Display last 10 actual closing values with dates and last 20 predicted closing values in separate columns
-    st.subheader('Last 10 Actual Closing Values')
-    st.write(df.tail(10))
-
-    st.subheader('Last 20 Predicted Closing Values')
-    st.write(forecast_renamed.tail(20))
+    # Display future predicted values
+    st.subheader(f'Future {future_periods} Predicted Closing Values')
+    st.write(future_predicted)
 
 def calculate_errors(forecast):
     # Calculate absolute errors
@@ -151,7 +142,7 @@ def main():
             forecast = predict(model, future)
             fig = display_results(df, forecast)
             st.plotly_chart(fig)
-            display_last_values(df, forecast)
+            display_last_values(df, forecast,future_periods)
             
 
 
