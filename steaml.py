@@ -51,13 +51,24 @@ def train_model(df):
 # Function to make predictions with Prophet model
 # Function to make predictions with Prophet model
 # Function to make predictions with Prophet model
+# Function to make predictions with Prophet model
 def predict(model, future, floor_percentage=0.05):
     forecast = model.predict(future)
+    
+    # Adjust forecasted values to prevent negative values and ensure smoothness
+    forecast['yhat'] = forecast['yhat'].clip(lower=0)  # Clip negative values to zero
+    
+    # Ensure smoothness of the forecast by removing sharp changes
+    forecast['yhat'] = forecast['yhat'].rolling(window=5, min_periods=1).mean()  # Smooth forecast with rolling mean
+    
+    # Adjust floor value dynamically based on recent historical data
     recent_data = forecast[forecast['ds'] > forecast['ds'].max() - pd.Timedelta(days=7)]  # Recent data (last 7 days)
     min_close = recent_data['yhat'].min()  # Minimum forecasted close value in the recent data
     floor_value = max(0.01, floor_percentage * min_close)  # Minimum floor value as 0.01 or a percentage of the minimum value
     forecast['yhat'] = forecast['yhat'].apply(lambda x: max(x, floor_value))
+    
     return forecast
+
 
 
 
