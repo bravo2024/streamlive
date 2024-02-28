@@ -13,7 +13,7 @@ def load_data(symbol, timeframe):
     else:  # Higher timeframes
         start_date = end_date - timedelta(days=365)  # 1 year of data
     data = yf.download(symbol, start=start_date, end=end_date, interval=timeframe)
-    return data[['Close']]  # Select 'Close' column only
+    return data
 
 # Function to train Prophet model
 def train_model(df):
@@ -22,7 +22,7 @@ def train_model(df):
         df = df.rename(columns={'Datetime': 'ds', 'Close': 'y'})
     elif 'Date' in df.columns:
         df = df.rename(columns={'Date': 'ds', 'Close': 'y'})
-    st.write(df.columns)
+    
     # Check if 'ds' column contains datetime objects
     if isinstance(df['ds'].iloc[0], pd.Timestamp):
         df['ds'] = df['ds'].dt.tz_localize(None)  # Remove timezone information if present
@@ -43,7 +43,11 @@ def predict(model, future):
 # Function to display results
 def display_results(df, forecast):
     fig = go.Figure()
-    fig.add_trace(go.Scatter(x=df.index, y=df['Close'], mode='lines', name='Actual'))
+    fig.add_trace(go.Candlestick(x=df.index,
+                    open=df['Open'],
+                    high=df['High'],
+                    low=df['Low'],
+                    close=df['Close'], name='Actual'))
     fig.add_trace(go.Scatter(x=forecast['ds'], y=forecast['yhat'], mode='lines', name='Predicted'))
     fig.update_layout(title='Actual vs. Predicted Closing Prices')
     st.plotly_chart(fig)
