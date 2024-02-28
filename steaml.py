@@ -100,7 +100,7 @@ def display_results(df, forecast):
 def display_last_values(df, forecast):
     # Concatenate last 10 actual and predicted values into a single DataFrame
     last_actual = df[['Close']].tail(10)
-    last_predicted = forecast[['ds', 'yhat']].tail(10)
+    last_predicted = forecast[['ds', 'yhat']].tail(20)
     last_values = pd.concat([last_actual, last_predicted.rename(columns={'ds': 'Date', 'yhat': 'Predicted'})], axis=1)
 
     # Reset index of the DataFrame
