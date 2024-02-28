@@ -222,13 +222,13 @@ def apply_leading_indicators(df):
             signals_df[indicator] = np.where((df[indicator] > 0), 1, 0)
 
     # Combine the original DataFrame with the styled signals DataFrame
-    result_df = pd.concat([df[['Close', 'SMA_20', 'EMA_50', 'RSI_14', 'MACD', 'MACD_Signal', 'Stochastic', 'CCI', 'ATR']], signals_df], axis=1)
+    result_df = pd.concat([df[['Date', 'Close', 'SMA_20', 'EMA_50', 'RSI_14', 'MACD', 'MACD_Signal', 'Stochastic', 'CCI', 'ATR']], signals_df], axis=1)
     
     # Apply styling to DataFrame based on buy/sell signals
     styled_df = result_df.style.applymap(lambda x: 'background-color: green' if x == 1 else 'background-color: white')
     
-    return styled_df
-
+    # Display the styled DataFrame using st.dataframe
+    st.dataframe(styled_df, height=800)
 
 def main():
     st.title("Live Stock Analysis")
@@ -265,9 +265,9 @@ def main():
             fig = display_results(df, forecast)
             st.plotly_chart(fig)
             display_last_values(df, forecast,future_periods,timeframe,model)
-            signal_table = apply_leading_indicators(df)
-            st.table(signal_table)
-
+            # signal_table = apply_leading_indicators(df)
+            # st.table(signal_table)
+            apply_leading_indicators(df)
             #signals = [
               ##  ('RSI', 'Sell'),
                # ('Moving Average', 'Buy'),
