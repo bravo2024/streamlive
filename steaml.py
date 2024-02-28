@@ -98,25 +98,24 @@ def display_results(df, forecast):
 
 
 def display_last_values(df, forecast):
-    # Concatenate last 10 actual and predicted values into a single DataFrame
     last_actual = df[['Close']].tail(10)
 
     # Extract last 10 predicted closing prices and shift by one row to align with actual values
     last_predicted = forecast[['ds', 'yhat']].tail(10).shift(1)
-    
-    # Extract next 10 predicted closing prices
-    future_predicted = forecast[['ds', 'yhat']].tail(10)
 
     # Concatenate last actual and predicted values
-    last_values = pd.concat([last_actual, last_predicted.rename(columns={'ds': 'Date', 'yhat': 'Predicted'})], axis=1)
+    last_values = pd.concat([last_actual.rename(columns={'Close': 'Actual'}), 
+                             last_predicted.rename(columns={'ds': 'Date', 'yhat': 'Predicted'})], axis=1)
 
     # Reset index of the DataFrame
     last_values.reset_index(drop=True, inplace=True)
 
-    # Display last 10 actual and corresponding predicted values, and future 10 predicted values in a single table
+    # Display last 10 actual and corresponding predicted values in a single table
     st.subheader('Last 10 Actual and Predicted Values')
     st.write(last_values)
 
+    # Display next 10 predicted values
+    future_predicted = forecast[['ds', 'yhat']].tail(10)
     st.subheader('Future 10 Predicted Values')
     st.write(future_predicted)
 
