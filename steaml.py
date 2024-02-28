@@ -20,7 +20,7 @@ def train_model(df):
     df = df.reset_index()
     if 'Datetime' in df.columns:
         df = df.rename(columns={'Datetime': 'ds', 'Close': 'y'})
-    elif 'DATE' in df.columns:
+    elif 'Date' in df.columns:
         df = df.rename(columns={'Date': 'ds', 'Close': 'y'})
     st.write(df.columns)
     # Check if 'ds' column contains datetime objects
