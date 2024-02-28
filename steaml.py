@@ -76,7 +76,7 @@ def main():
             else:
                 future = model.make_future_dataframe(periods=10, freq='D')  # Adjust periods and frequency as needed
             forecast = predict(model, future)
-            display_results(df, forecast)
+            fig = display_results(df, forecast)
             st.plotly_chart(fig)
 
 if __name__ == "__main__":
