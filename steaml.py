@@ -168,6 +168,24 @@ def display_last_values(df, forecast, future_periods, timeframe,model):
     st.write(future_predicted)
 
 
+def generate_signal_table(signals):
+    # Create a DataFrame to hold the signals
+    signal_df = pd.DataFrame(signals, columns=['Indicator', 'Signal'])
+    
+    # Map signal values to colors
+    color_map = {'Buy': 'green', 'Sell': 'red', 'Hold': 'gray'}
+    signal_df['Color'] = signal_df['Signal'].map(color_map)
+    
+    # Create a Streamlit table
+    st.subheader('Buy/Sell Signals for Leading and Lagging Indicators')
+    st.markdown("""<style>
+                table td:nth-child(3) {
+                    color: white;
+                    font-weight: bold;
+                    text-align: center;
+                }
+                </style>""", unsafe_allow_html=True)  # Apply style to the table
+    st.table(signal_df.style.apply(lambda row: f'background-color: {row.Color}', axis=1))
 
 
 
@@ -207,7 +225,14 @@ def main():
             st.plotly_chart(fig)
             display_last_values(df, forecast,future_periods,timeframe,model)
             
-
+            signals = [
+                ('MACD', 'Buy'),
+                ('RSI', 'Sell'),
+                ('Moving Average', 'Buy'),
+                ('Stochastic Oscillator', 'Sell'),
+                ('Bollinger Bands', 'Hold')
+            ]
+            generate_signal_table(signals)
 
 if __name__ == "__main__":
     main()
