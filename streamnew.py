@@ -179,13 +179,13 @@ def apply_leading_indicators(df):
     # Generate buy/sell signals based on indicator values
     df['Signal'] = 'Hold'
     # Example: Buy when SMA_20 crosses above EMA_50, RSI > 30, and MACD > Signal
-    buy_condition = (df['SMA_20'] > df['EMA_50']) & (df['RSI_14'] > 30) & (df['MACD'] > df['MACD Signal'])
+    buy_condition = (df['SMA_20'] > df['EMA_50']) & (df['RSI_14'] > 50) & (df['MACD'] > df['MACD Signal'])
     df.loc[buy_condition, 'Signal'] = 'Buy'
     # Example: Sell when SMA_20 crosses below EMA_50, RSI < 70, and MACD < Signal
-    sell_condition = (df['SMA_20'] < df['EMA_50']) & (df['RSI_14'] < 70) & (df['MACD'] < df['MACD Signal'])
+    sell_condition = (df['SMA_20'] < df['EMA_50']) & (df['RSI_14'] < 50) & (df['MACD'] < df['MACD Signal'])
     df.loc[sell_condition, 'Signal'] = 'Sell'
-    st.write(df.tail(10))
-    return df[['Close', 'Signal']]  # Return DataFrame with Date, Close, and Signal columns
+    #st.write(df.tail(10))
+    return df[['Close', 'Signal','SMA_20','RSI_14']]  # Return DataFrame with Date, Close, and Signal columns
 
 # Assuming you already have a DataFrame named 'model
 
@@ -228,7 +228,7 @@ def main():
             st.plotly_chart(fig)
             display_last_values(df, forecast,future_periods,timeframe,model)
             signal_table = apply_leading_indicators(df)
-            st.table(signal_table)
+            st.table(signal_table.tail(10))
 
             #signals = [
               ##  ('RSI', 'Sell'),
