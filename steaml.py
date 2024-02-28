@@ -47,10 +47,14 @@ def train_model(df):
     return model
 
 # Function to make predictions with Prophet model
-def predict(model, future, floor_value=0):
+# Function to make predictions with Prophet model
+def predict(model, future):
     forecast = model.predict(future)
+    min_close = future['ds'].min()  # Minimum date in the future DataFrame
+    floor_value = max(0, min_close)  # Ensure floor value is non-negative
     forecast['yhat'] = forecast['yhat'].apply(lambda x: max(x, floor_value))
     return forecast
+
 
 # Function to display results
 def display_results(df, forecast):
