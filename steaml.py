@@ -84,10 +84,11 @@ def display_results(df, forecast):
     fig.add_trace(go.Scatter(x=forecast['ds'], y=forecast['yhat'], mode='lines', name='Predicted'))
     fig.update_layout(title='Actual vs. Predicted Closing Prices')
 
-    date_index = pd.to_datetime(df.index)
+    min_length = min(len(df.index), len(forecast['ds']))
+    date_index = pd.to_datetime(df.index[:min_length])  # Extract date information from the index
 
     # Create a DataFrame with actual and predicted values
-    results_df = pd.DataFrame({'Date': date_index, 'Actual': df['Close'], 'Predicted': forecast['yhat']})
+    results_df = pd.DataFrame({'Date': date_index, 'Actual': df['Close'][:min_length], 'Predicted': forecast['yhat'][:min_length]})
 
     # Display actual and predicted values in columns below the plot
     st.subheader('Actual vs. Predicted Values')
