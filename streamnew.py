@@ -266,7 +266,7 @@ def main():
             st.plotly_chart(fig)
             display_last_values(df, forecast,future_periods,timeframe,model)
             signal_table = apply_leading_indicators(df)
-            st.table(signal_table.tail(10))
+            st.table(signal_table)
 
             #signals = [
               ##  ('RSI', 'Sell'),
