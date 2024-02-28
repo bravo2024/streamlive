@@ -232,9 +232,15 @@ def apply_leading_indicators(df):
     # Calculate correlation matrix
     corr_matrix = indicators_df.corr()
 
-    # Plot heatmap
+    # Plot heatmap with buy/sell/hold annotations
+    st.write("### Correlation Heatmap with Buy/Sell/Hold Annotations")
     fig, ax = plt.subplots()
     heatmap = ax.imshow(corr_matrix, cmap='coolwarm', interpolation='nearest')
+
+    # Add buy/sell/hold annotations
+    for i in range(len(indicators_df.columns)):
+        for j in range(len(indicators_df.columns)):
+            text = ax.text(j, i, f"{corr_matrix.iloc[i, j]:.2f}\n{df['Signal'].iloc[j]}", ha="center", va="center", color="black")
 
     # Customize ticks and labels
     ax.set_xticks(range(len(corr_matrix.columns)))
@@ -249,11 +255,10 @@ def apply_leading_indicators(df):
     plt.colorbar(heatmap)
 
     # Add title
-    plt.title('Correlation Heatmap of Leading Indicators')
+    plt.title('Correlation Heatmap of Leading Indicators with Buy/Sell/Hold Annotations')
 
     # Show the plot
     st.pyplot(fig)
-
 
 
 def main():
