@@ -124,7 +124,7 @@ def calculate_signal(df, forecast, future_periods):
     return last_predicted
 
 
-def display_last_values(df, forecast, future_periods, timeframe):
+def display_last_values(df, forecast, future_periods, timeframe,model):
     if timeframe in ['1m', '5m', '15m', '30m', '1h']:
         # For intraday time frames, adjust future dates to align with the desired time interval
         last_date = forecast['ds'].iloc[-1]  # Get the last date in the forecast
@@ -205,7 +205,7 @@ def main():
             forecast = predict(model, future)
             fig = display_results(df, forecast)
             st.plotly_chart(fig)
-            display_last_values(df, forecast,future_periods,timeframe)
+            display_last_values(df, forecast,future_periods,timeframe,model)
             
 
 
