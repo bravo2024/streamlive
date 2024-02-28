@@ -207,7 +207,7 @@ def apply_leading_indicators(df):
     - DataFrame: DataFrame with added indicators, buy/sell signals, and their values.
     """
     # Calculate indicators
-  df['SMA_20'] = ta.SMA(df['Close'], timeperiod=20)
+    df['SMA_20'] = ta.SMA(df['Close'], timeperiod=20)
     df['EMA_50'] = ta.EMA(df['Close'], timeperiod=50)
     df['RSI_14'] = ta.RSI(df['Close'], timeperiod=14)
     df['MACD'], df['MACD_Signal'], _ = ta.MACD(df['Close'])
