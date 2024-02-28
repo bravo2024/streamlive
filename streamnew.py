@@ -4,7 +4,8 @@ import pandas as pd
 from prophet import Prophet
 import plotly.graph_objects as go
 import yfinance as yf
-
+import numpy
+import talib
 # Function to load stock data using Yahoo Finance
 # Function to load stock data using Yahoo Finance
 # Function to load stock data using Yahoo Finance
