@@ -97,35 +97,55 @@ def display_results(df, forecast):
     return fig
 
 
-def display_last_values(df, forecast, future_periods):
+#def display_last_values(df, forecast, future_periods):
     # Extract future predicted closing prices
-    future_predicted = forecast[['ds', 'yhat']].tail(future_periods)
+    #future_predicted = forecast[['ds', 'yhat']].tail(future_periods)
 
     # Rename columns for clarity
-    future_predicted.rename(columns={'ds': 'Future Date', 'yhat': 'Future Predicted Close'}, inplace=True)
+    #future_predicted.rename(columns={'ds': 'Future Date', 'yhat': 'Future Predicted Close'}, inplace=True)
 
     # Display future predicted values
-    st.subheader(f'Future {future_periods} Predicted Closing Values')
-    st.write(future_predicted)
+    #st.subheader(f'Future {future_periods} Predicted Closing Values')
+    #st.write(future_predicted)
 
-def calculate_errors(forecast):
-    # Calculate absolute errors
-    forecast['abs_error'] = abs(forecast['y'] - forecast['yhat'])
+def calculate_signal(df, forecast, future_periods):
+    # Calculate thresholds for buy and sell signals
+    buy_threshold = forecast['yhat'].quantile(0.75)
+    sell_threshold = forecast['yhat'].quantile(0.25)
     
-    # Mean Absolute Error (MAE)
-    mae = forecast['abs_error'].mean()
+    # Extract the last predicted closing prices
+    last_predicted = forecast[['ds', 'yhat']].tail(future_periods)
 
-    # Mean Squared Error (MSE)
-    mse = (forecast['abs_error'] ** 2).mean()
+    # Add buy/sell signal based on thresholds
+    last_predicted['Signal'] = 'Hold'
+    last_predicted.loc[last_predicted['yhat'] > buy_threshold, 'Signal'] = 'Buy'
+    last_predicted.loc[last_predicted['yhat'] < sell_threshold, 'Signal'] = 'Sell'
 
-    # Root Mean Squared Error (RMSE)
-    rmse = mse ** 0.5
+    return last_predicted
 
-    # Mean Absolute Percentage Error (MAPE)
-    forecast['abs_percentage_error'] = forecast['abs_error'] / forecast['y']
-    mape = forecast['abs_percentage_error'].mean() * 100
-    
-    return mae, mse, rmse, mape
+
+def display_last_values(df, forecast, future_periods):
+    # Extract last 20 predicted closing prices
+    last_predicted = forecast[['ds', 'yhat']].tail(future_periods)
+
+    # Rename columns for clarity
+    last_predicted.rename(columns={'ds': 'Predicted Date', 'yhat': 'Predicted Close'}, inplace=True)
+
+    # Calculate buy/sell signal
+    signal_df = calculate_signal(df, forecast, future_periods)
+
+    # Reset index of the DataFrames
+    signal_df.reset_index(drop=True, inplace=True)
+
+    # Display last 10 actual closing values with dates and last 20 predicted closing values in separate columns
+    st.subheader('Last 10 Actual Closing Values')
+    st.write(df.tail(10))
+
+    st.subheader('Last 20 Predicted Closing Values')
+    st.write(last_predicted)
+
+    st.subheader('Buy/Sell Signal')
+    st.write(signal_df)
 
 
 def main():
