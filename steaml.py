@@ -124,9 +124,16 @@ def calculate_signal(df, forecast, future_periods):
     return last_predicted
 
 
-def display_last_values(df, forecast, future_periods):
+def display_last_values(df, forecast, future_periods, timeframe):
+    if timeframe in ['1m', '5m', '15m', '30m', '1h']:
+        # Filter future dataframe for intraday timeframes
+        last_predicted = forecast[forecast['ds'].dt.minute.isin([0])]  # For hourly data, select data points at the beginning of each hour
+    else:
+        # For daily or other timeframes, display all future predicted values
+        last_predicted = forecast
+
     # Extract last 20 predicted closing prices
-    last_predicted = forecast[['ds', 'yhat']].tail(future_periods)
+    last_predicted = last_predicted[['ds', 'yhat']].tail(future_periods)
 
     # Calculate buy/sell signal
     signal_df = calculate_signal(df, forecast, future_periods)
@@ -149,6 +156,7 @@ def display_last_values(df, forecast, future_periods):
     future_predicted.rename(columns={'ds': 'Future Date', 'yhat': 'Future Predicted Close'}, inplace=True)
     st.subheader(f'Future {future_periods} Predicted Closing Values')
     st.write(future_predicted)
+
 
 
 def main():
@@ -185,7 +193,7 @@ def main():
             forecast = predict(model, future)
             fig = display_results(df, forecast)
             st.plotly_chart(fig)
-            display_last_values(df, forecast,future_periods)
+            display_last_values(df, forecast,future_periods,timeframe)
             
 
 
