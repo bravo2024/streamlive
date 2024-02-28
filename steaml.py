@@ -98,13 +98,7 @@ def display_results(df, forecast):
 
 
 def display_last_values(df, forecast):
-    if 'Date' in df.columns:
-        last_actual = df[['Date', 'Close']].tail(10)
-    elif 'Datetime' in df.columns:
-        last_actual = df[['Datetime', 'Close']].tail(10)
-    else:
-        st.error("No 'Date' or 'Datetime' column found in the DataFrame.")
-        return
+    
 
     # Extract last 20 predicted closing prices
     last_predicted = forecast[['ds', 'yhat']].tail(20)
@@ -118,7 +112,7 @@ def display_last_values(df, forecast):
 
     # Display last 10 actual closing values with dates and last 20 predicted closing values in separate columns
     st.subheader('Last 10 Actual Closing Values')
-    st.write(last_actual)
+    st.write(df.tail(10))
 
     st.subheader('Last 20 Predicted Closing Values')
     st.write(last_predicted)
