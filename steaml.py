@@ -144,6 +144,12 @@ def display_last_values(df, forecast, future_periods):
     st.subheader('Last 20 Predicted Closing Values with Buy/Sell Signal')
     st.write(last_predicted)
 
+    # Display future predicted closing values
+    future_predicted = forecast[['ds', 'yhat']].tail(future_periods)
+    future_predicted.rename(columns={'ds': 'Future Date', 'yhat': 'Future Predicted Close'}, inplace=True)
+    st.subheader(f'Future {future_periods} Predicted Closing Values')
+    st.write(future_predicted)
+
 
 def main():
     st.title("Live Stock Analysis")
