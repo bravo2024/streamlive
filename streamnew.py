@@ -171,8 +171,8 @@ def display_last_values(df, forecast, future_periods, timeframe,model):
 
 def apply_leading_indicators(df):
     # Calculate indicators
-    df['SMA_20'] = ta.sma(df['Close'], window=20)
-    df['EMA_50'] = ta.ema(df['Close'], window=50)
+    df['SMA_20'] = ta.SMA(df['Close'], window=20)
+    df['EMA_50'] = ta.EMA(df['Close'], window=50)
     df['RSI_14'] = ta.momentum.rsi(df['Close'], window=14)
     df['MACD'], df['MACD Signal'], _ = ta.trend.macd(df['Close'])
 
