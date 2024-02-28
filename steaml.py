@@ -89,7 +89,11 @@ def display_results(df, forecast):
     fig.add_trace(go.Scatter(x=forecast['ds'], y=forecast['yhat'], mode='lines', name='Predicted'))
     fig.update_layout(title='Actual vs. Predicted Closing Prices')
     #st.plotly_chart(fig)
-    
+    st.subheader('Last 10 Actual Values')
+    st.write(df.tail(10))
+
+    st.subheader('Last 10 Predicted Values')
+    st.write(forecast[['ds', 'yhat']].tail(10))
     return fig
 
 
