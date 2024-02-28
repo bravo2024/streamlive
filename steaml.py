@@ -128,24 +128,21 @@ def display_last_values(df, forecast, future_periods):
     # Extract last 20 predicted closing prices
     last_predicted = forecast[['ds', 'yhat']].tail(future_periods)
 
-    # Rename columns for clarity
-    last_predicted.rename(columns={'ds': 'Predicted Date', 'yhat': 'Predicted Close'}, inplace=True)
-
     # Calculate buy/sell signal
     signal_df = calculate_signal(df, forecast, future_periods)
 
-    # Reset index of the DataFrames
-    signal_df.reset_index(drop=True, inplace=True)
+    # Merge predicted closing prices with buy/sell signal
+    last_predicted = pd.merge(last_predicted, signal_df[['Predicted Date', 'Signal']], on='Predicted Date', how='left')
 
-    # Display last 10 actual closing values with dates and last 20 predicted closing values in separate columns
-    st.subheader('Last 10 Actual Closing Values')
-    st.write(df.tail(10))
+    # Rename columns for clarity
+    last_predicted.rename(columns={'ds': 'Predicted Date', 'yhat': 'Predicted Close'}, inplace=True)
 
-    st.subheader('Last 20 Predicted Closing Values')
+    # Reset index of the DataFrame
+    last_predicted.reset_index(drop=True, inplace=True)
+
+    # Display last 20 predicted closing values with buy/sell signal
+    st.subheader('Last 20 Predicted Closing Values with Buy/Sell Signal')
     st.write(last_predicted)
-
-    st.subheader('Buy/Sell Signal')
-    st.write(signal_df)
 
 
 def main():
