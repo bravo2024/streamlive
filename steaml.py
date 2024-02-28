@@ -87,6 +87,8 @@ def display_results(df, forecast):
 
 def display_values(df, forecast):
     # Check if the DataFrame contains 'Date' or 'Datetime' column
+
+    st.write(df.columns)
     date_column = 'Date' if 'Date' in df.columns else 'Datetime'
     
     # Create a DataFrame with 'Date' and 'Close' (actual) columns
