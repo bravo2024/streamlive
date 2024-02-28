@@ -49,10 +49,10 @@ def train_model(df):
 # Function to make predictions with Prophet model
 # Function to make predictions with Prophet model
 # Function to make predictions with Prophet model
-def predict(model, future):
+def predict(model, future, floor_percentage=0.05):
     forecast = model.predict(future)
-    min_close = forecast['yhat'].min()  # Minimum forecasted close value
-    floor_value = max(0, min_close)  # Ensure floor value is non-negative
+    max_close = forecast['yhat'].max()  # Maximum forecasted close value
+    floor_value = max(0, floor_percentage * max_close)  # Floor value as a percentage of the maximum value
     forecast['yhat'] = forecast['yhat'].apply(lambda x: max(x, floor_value))
     return forecast
 
