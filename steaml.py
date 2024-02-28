@@ -101,11 +101,11 @@ def display_last_values(df, forecast):
     
 
     # Extract last 20 predicted closing prices
-    last_predicted = forecast[['ds', 'yhat']].tail(20)
+    #last_predicted = forecast[['ds', 'yhat']].tail(20)
 
     # Rename columns for clarity
-    last_predicted.rename(columns={'ds': 'Predicted Date', 'yhat': 'Predicted Close'}, inplace=True)
-
+    #last_predicted.rename(columns={'ds': 'Predicted Date', 'yhat': 'Predicted Close'}, inplace=True)
+    forecast_renamed=forecast.rename(columns={'ds': 'Predicted Date'})
     # Reset index of the DataFrames
    
     #last_predicted.reset_index(drop=True, inplace=True)
@@ -115,7 +115,7 @@ def display_last_values(df, forecast):
     st.write(df.tail(10))
 
     st.subheader('Last 20 Predicted Closing Values')
-    st.write(last_predicted)
+    st.write(forecast_renamed.tail(20))
 
 
 def main():
