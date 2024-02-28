@@ -89,7 +89,7 @@ def display_values(df, forecast):
     # Check if the DataFrame contains 'Date' or 'Datetime' column
 
     st.write(df.tail(10))
-    date_column = 'Date' if 'Date' in df.columns else 'Datetime'
+    date_column = 'Date' if 'Datetime' in df.columns else 'Date'
     
     # Create a DataFrame with 'Date' and 'Close' (actual) columns
     actual_df = df[[date_column, 'Close']]
