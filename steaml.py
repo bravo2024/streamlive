@@ -130,7 +130,26 @@ def calculate_errors(forecast):
 
 def main():
     st.title("Live Stock Analysis")
-    symbol = st.text_input("Enter Stock Symbol (e.g., AAPL for Apple Inc.):")
+
+
+    
+    #symbol = st.text_input("Enter Stock Symbol (e.g., AAPL for Apple Inc.):")
+    symbols = [
+        'BHARTIARTL.NS', 'HDFCLIFE.NS', 'BRITANNIA.NS', 'TCS.NS', 'LTIM.NS',
+        'ITC.NS', 'CIPLA.NS', 'TECHM.NS', 'NTPC.NS', 'BAJFINANCE.NS',
+        'BAJAJFINSV.NS', 'HINDALCO.NS', 'LT.NS', 'NESTLEIND.NS', 'HEROMOTOCO.NS',
+        'TATACONSUM.NS', 'ONGC.NS', 'KOTAKBANK.NS', 'ULTRACEMCO.NS', 'TITAN.NS',
+        'COALINDIA.NS', 'RELIANCE.NS', 'TATASTEEL.NS', 'ADANIENT.NS', 'WIPRO.NS',
+        'INDUSINDBK.NS', 'MARUTI.NS', 'BAJAJ-AUTO.NS', 'APOLLOHOSP.NS'
+    ]
+    select_option = st.radio("Select Input Method", ["Dropdown", "Type"])
+    
+    if select_option == "Dropdown":
+        symbol = st.selectbox("Select Stock Symbol", symbols)
+    else:
+        symbol = st.text_input("Enter Stock Symbol")
+
+    
     timeframe = st.selectbox("Select Timeframe", ['1m', '5m', '15m', '30m', '1h', '1d', '1wk', '1mo'])
     future_periods = st.slider("Select Number of Future Periods", min_value=1, max_value=365, value=10)
 
