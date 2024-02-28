@@ -103,6 +103,9 @@ def display_last_values(df, forecast):
     last_predicted = forecast[['ds', 'yhat']].tail(10)
     last_values = pd.concat([last_actual, last_predicted.rename(columns={'ds': 'Date', 'yhat': 'Predicted'})], axis=1)
 
+    # Reset index of the DataFrame
+    last_values.reset_index(drop=True, inplace=True)
+
     # Display last 10 actual and predicted values in a single table
     st.subheader('Last 10 Actual and Predicted Values')
     st.write(last_values)
