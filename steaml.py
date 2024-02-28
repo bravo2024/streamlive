@@ -152,11 +152,7 @@ def main():
             fig = display_results(df, forecast)
             st.plotly_chart(fig)
             display_last_values(df, forecast)
-            mae, mse, rmse, mape = calculate_errors(forecast)
-            st.write("Mean Absolute Error (MAE):", mae)
-            st.write("Mean Squared Error (MSE):", mse)
-            st.write("Root Mean Squared Error (RMSE):", rmse)
-            st.write("Mean Absolute Percentage Error (MAPE):", mape)
+            
 
 
 if __name__ == "__main__":
