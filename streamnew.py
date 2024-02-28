@@ -252,7 +252,7 @@ def apply_leading_indicators(df):
     # Combine the original DataFrame with the styled signals DataFrame
     result_df = pd.concat([df[['Close', 'SMA_20', 'EMA_50', 'RSI_14', 'MACD', 'MACD_Signal', 'Stochastic', 'CCI', 'ATR']], signals_df_styled], axis=1)
     
-    return result
+    return result_df
 
 
 def main():
