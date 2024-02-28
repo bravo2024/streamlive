@@ -89,15 +89,23 @@ def display_results(df, forecast):
     fig.add_trace(go.Scatter(x=forecast['ds'], y=forecast['yhat'], mode='lines', name='Predicted'))
     fig.update_layout(title='Actual vs. Predicted Closing Prices')
     #st.plotly_chart(fig)
-    st.subheader('Last 10 Actual Values')
-    st.write(df.tail(10))
+    #st.subheader('Last 10 Actual Values')
+    #st.write(df.tail(10))
 
-    st.subheader('Last 10 Predicted Values')
-    st.write(forecast[['ds', 'yhat']].tail(10))
+    #st.subheader('Last 10 Predicted Values')
+    #st.write(forecast[['ds', 'yhat']].tail(10))
     return fig
 
 
+def display_last_values(df, forecast):
+    # Concatenate last 10 actual and predicted values into a single DataFrame
+    last_actual = df[['Close']].tail(10)
+    last_predicted = forecast[['ds', 'yhat']].tail(10)
+    last_values = pd.concat([last_actual, last_predicted.rename(columns={'ds': 'Date', 'yhat': 'Predicted'})], axis=1)
 
+    # Display last 10 actual and predicted values in a single table
+    st.subheader('Last 10 Actual and Predicted Values')
+    st.write(last_values)
 
 
 
@@ -115,6 +123,8 @@ def main():
             forecast = predict(model, future)
             fig = display_results(df, forecast)
             st.plotly_chart(fig)
+            display_last_values(df, forecast)
+
 
 if __name__ == "__main__":
     main()
