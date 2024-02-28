@@ -132,7 +132,7 @@ def display_last_values(df, forecast, future_periods):
     signal_df = calculate_signal(df, forecast, future_periods)
 
     # Merge predicted closing prices with buy/sell signal
-    last_predicted = pd.merge(last_predicted, signal_df[['Predicted Date', 'Signal']], on='Predicted Date', how='left')
+    last_predicted = pd.merge(last_predicted, signal_df[['ds', 'Signal']], left_on='ds', right_on='ds', how='left')
 
     # Rename columns for clarity
     last_predicted.rename(columns={'ds': 'Predicted Date', 'yhat': 'Predicted Close'}, inplace=True)
