@@ -220,16 +220,15 @@ def main():
             st.plotly_chart(fig)
             display_last_values(df, forecast,future_periods,timeframe,model)
             
-            signals = [
-                ('MACD', 'Buy'),
-                ('RSI', 'Sell'),
-                ('Moving Average', 'Buy'),
-                ('Stochastic Oscillator', 'Sell'),
-                ('Bollinger Bands', 'Hold')
-            ]
-            signal_df_styled = generate_signal_table(signals)
-            st.subheader('Buy/Sell Signals for Leading and Lagging Indicators')
-            st.write(signal_df_styled)
+            #signals = [
+              ##  ('RSI', 'Sell'),
+               # ('Moving Average', 'Buy'),
+               # ('Stochastic Oscillator', 'Sell'),
+             #   ('Bollinger Bands', 'Hold')
+           # ]
+            #signal_df_styled = generate_signal_table(signals)
+            #st.subheader('Buy/Sell Signals for Leading and Lagging Indicators')
+            #st.write(signal_df_styled)
 
 if __name__ == "__main__":
     main()
