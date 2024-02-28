@@ -18,9 +18,17 @@ def load_data(symbol, timeframe):
 # Function to train Prophet model
 def train_model(df):
     df = df.reset_index().rename(columns={'Datetime': 'ds', 'Close': 'y'})
-    df['ds'] = df['ds'].dt.tz_localize(None)
+    
+    # Check if 'ds' column contains datetime objects
+    if isinstance(df['ds'].iloc[0], pd.Timestamp):
+        df['ds'] = df['ds'].dt.tz_localize(None)  # Remove timezone information if present
+    else:
+        df['ds'] = pd.to_datetime(df['ds'])  # Convert to datetime if it's not
+    
+    # Train Prophet model
     model = Prophet()
     model.fit(df)
+    
     return model
 
 # Function to make predictions with Prophet model
