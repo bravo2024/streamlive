@@ -173,25 +173,27 @@ def display_last_values(df, forecast, future_periods, timeframe,model):
     st.write(future_predicted)
 
 """
-def apply_leading_indicators(df):
+"""
+#def apply_leading_indicators(df):
     # Calculate indicators
-    df['SMA_20'] = ta.SMA(df['Close'], timeperiod=20)
-    df['EMA_50'] = ta.EMA(df['Close'], timeperiod=50)
-    df['RSI_14'] = ta.RSI(df['Close'], timeperiod=14)
-    df['MACD'], df['MACD Signal'], _ = ta.MACD(df['Close'])
+   # df['SMA_20'] = ta.SMA(df['Close'], timeperiod=20)
+   # df['EMA_50'] = ta.EMA(df['Close'], timeperiod=50)
+   # df['RSI_14'] = ta.RSI(df['Close'], timeperiod=14)
+   # df['MACD'], df['MACD Signal'], _ = ta.MACD(df['Close'])
 
     # Generate buy/sell signals based on indicator values
-    df['Signal'] = 'Hold'
+   # df['Signal'] = 'Hold'
     # Example: Buy when SMA_20 crosses above EMA_50, RSI > 30, and MACD > Signal
-    buy_condition = (df['SMA_20'] > df['EMA_50']) & (df['RSI_14'] > 50) & (df['MACD'] > df['MACD Signal'])
-    df.loc[buy_condition, 'Signal'] = 'Buy'
+  #  buy_condition = (df['SMA_20'] > df['EMA_50']) & (df['RSI_14'] > 50) & (df['MACD'] > df['MACD Signal'])
+  #  df.loc[buy_condition, 'Signal'] = 'Buy'
     # Example: Sell when SMA_20 crosses below EMA_50, RSI < 70, and MACD < Signal
-    sell_condition = (df['SMA_20'] < df['EMA_50']) & (df['RSI_14'] < 50) & (df['MACD'] < df['MACD Signal'])
-    df.loc[sell_condition, 'Signal'] = 'Sell'
+   # sell_condition = (df['SMA_20'] < df['EMA_50']) & (df['RSI_14'] < 50) & (df['MACD'] < df['MACD Signal'])
+   # df.loc[sell_condition, 'Signal'] = 'Sell'
     #st.write(df.tail(10))
-    return df[['Close', 'Signal','SMA_20','RSI_14']]  # Return DataFrame with Date, Close, and Signal columns
+   # return df[['Close', 'Signal','SMA_20','RSI_14']]  # Return DataFrame with Date, Close, and Signal columns
 
 # Assuming you already have a DataFrame named 'model
+"""
 """
 def apply_leading_indicators(df):
     """
