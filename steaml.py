@@ -126,14 +126,24 @@ def calculate_signal(df, forecast, future_periods):
 
 def display_last_values(df, forecast, future_periods, timeframe):
     if timeframe in ['1m', '5m', '15m', '30m', '1h']:
-        # Filter future dataframe for intraday timeframes
-        last_predicted = forecast[forecast['ds'].dt.minute.isin([0])]  # For hourly data, select data points at the beginning of each hour
+        # For intraday time frames, adjust future dates to align with the desired time interval
+        last_date = forecast['ds'].iloc[-1]  # Get the last date in the forecast
+        freq = {'1m': 'T', '5m': '5T', '15m': '15T', '30m': '30T', '1h': 'H'}[timeframe]  # Mapping from time frame to frequency
+        future = pd.date_range(start=last_date, periods=future_periods, freq=freq)  # Generate future dates
+        future_forecast = pd.DataFrame({'ds': future})
+
+        # Make predictions for the future dates
+        future_forecast['yhat'] = predict(model, future_forecast)['yhat']
+
+        # Combine the future forecast with the existing forecast
+        forecast = pd.concat([forecast, future_forecast], ignore_index=True)
+
     else:
-        # For daily or other timeframes, display all future predicted values
-        last_predicted = forecast
+        # For daily or other time frames, display all future predicted values
+        forecast = forecast.tail(future_periods)  # Limit the forecast to the specified number of future periods
 
     # Extract last 20 predicted closing prices
-    last_predicted = last_predicted[['ds', 'yhat']].tail(20)  # Always extract last 20 values
+    last_predicted = forecast[['ds', 'yhat']].tail(20)  # Always extract last 20 values
 
     # Calculate buy/sell signal
     signal_df = calculate_signal(df, forecast, future_periods)
@@ -156,6 +166,7 @@ def display_last_values(df, forecast, future_periods, timeframe):
     future_predicted.rename(columns={'ds': 'Future Date', 'yhat': 'Future Predicted Close'}, inplace=True)
     st.subheader(f'Future {future_periods} Predicted Closing Values')
     st.write(future_predicted)
+
 
 
 
