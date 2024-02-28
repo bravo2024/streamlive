@@ -326,31 +326,31 @@ def generate_signal_plots(df):
         plt.xticks(rotation=45)
         st.pyplot(plt)
 '''
-    df['SMA_20'] = ta.SMA(df['Close'], timeperiod=20)
-    df['EMA_50'] = ta.EMA(df['Close'], timeperiod=50)
-    df['RSI_14'] = ta.RSI(df['Close'], timeperiod=14)
-    df['MACD'], df['MACD_Signal'], _ = ta.MACD(df['Close'])
+     df['SMA_20'] = ta.SMA(df['Close'], timeperiod=20)
+     df['EMA_50'] = ta.EMA(df['Close'], timeperiod=50)
+     df['RSI_14'] = ta.RSI(df['Close'], timeperiod=14)
+     df['MACD'], df['MACD_Signal'], _ = ta.MACD(df['Close'])
 
     # Additional indicators suitable for smaller time frames
-    df['Stochastic'] = ta.STOCH(df['High'], df['Low'], df['Close'], fastk_period=14, slowk_period=3, slowd_period=3)[0]
-    df['CCI'] = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=20)
-    df['ATR'] = ta.ATR(df['High'], df['Low'], df['Close'], timeperiod=14)
+     df['Stochastic'] = ta.STOCH(df['High'], df['Low'], df['Close'], fastk_period=14, slowk_period=3, slowd_period=3)[0]
+     df['CCI'] = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=20)
+     df['ATR'] = ta.ATR(df['High'], df['Low'], df['Close'], timeperiod=14)
 
     # Generate buy/sell signals based on indicator values
-    df['Signal'] = 'Hold'
+     df['Signal'] = 'Hold'
     # Example: Buy when SMA_20 crosses above EMA_50, RSI > 30, and MACD > Signal
-    buy_condition = (df['SMA_20'] > df['EMA_50']) & (df['RSI_14'] > 30) & (df['MACD'] > df['MACD_Signal'])
-    df.loc[buy_condition, 'Signal'] = 'Buy'
+     buy_condition = (df['SMA_20'] > df['EMA_50']) & (df['RSI_14'] > 30) & (df['MACD'] > df['MACD_Signal'])
+     df.loc[buy_condition, 'Signal'] = 'Buy'
     # Example: Sell when SMA_20 crosses below EMA_50, RSI < 70, and MACD < Signal
-    sell_condition = (df['SMA_20'] < df['EMA_50']) & (df['RSI_14'] < 70) & (df['MACD'] < df['MACD_Signal'])
-    df.loc[sell_condition, 'Signal'] = 'Sell'
+     sell_condition = (df['SMA_20'] < df['EMA_50']) & (df['RSI_14'] < 70) & (df['MACD'] < df['MACD_Signal'])
+     df.loc[sell_condition, 'Signal'] = 'Sell'
 
     # Plot indicators with buy/sell/hold signals in the same plot
-    st.write("### Signal Plot")
-    plt.figure(figsize=(10, 5))
-    for col in ['Close', 'SMA_20', 'EMA_50', 'RSI_14', 'MACD', 'Stochastic', 'CCI', 'ATR']:
+     st.write("### Signal Plot")
+     plt.figure(figsize=(10, 5))
+     for col in ['Close', 'SMA_20', 'EMA_50', 'RSI_14', 'MACD', 'Stochastic', 'CCI', 'ATR']:
         plt.plot(df.index, df[col], label=col)
-        for index, row in df.iterrows():
+         for index, row in df.iterrows():
             if row['Signal'] == 'Buy':
                 plt.scatter(index, row[col], color='green', label='Buy', marker='^', s=100)
             elif row['Signal'] == 'Sell':
