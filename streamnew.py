@@ -281,6 +281,11 @@ def generate_signal_plots(df):
     - None
     """
     # Calculate indicators
+    if 'Date' not in df.columns or 'Close' not in df.columns:
+        st.error("DataFrame must contain 'Date' and 'Close' columns.")
+        return
+
+    # Calculate indicators
     df['SMA_20'] = ta.SMA(df['Close'], timeperiod=20)
     df['EMA_50'] = ta.EMA(df['Close'], timeperiod=50)
     df['RSI_14'] = ta.RSI(df['Close'], timeperiod=14)
