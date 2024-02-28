@@ -108,7 +108,7 @@ def display_last_values(df, forecast):
 
     # Reset index of the DataFrames
    
-    last_predicted.reset_index(drop=True, inplace=True)
+    #last_predicted.reset_index(drop=True, inplace=True)
 
     # Display last 10 actual closing values with dates and last 20 predicted closing values in separate columns
     st.subheader('Last 10 Actual Closing Values')
