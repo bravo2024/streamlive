@@ -17,7 +17,7 @@ def load_data(symbol, timeframe):
 
 # Function to train Prophet model
 def train_model(df):
-    df = df.reset_index().rename(columns={'Date': 'ds', 'Close': 'y'})
+    df = df.reset_index().rename(columns={'Datetime': 'ds', 'Close': 'y'})
     model = Prophet()
     model.fit(df)
     return model
