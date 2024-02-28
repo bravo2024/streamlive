@@ -17,8 +17,12 @@ def load_data(symbol, timeframe):
 
 # Function to train Prophet model
 def train_model(df):
-    df = df.reset_index().rename(columns={'Datetime': 'ds', 'Close': 'y'})
-    
+    df = df.reset_index()
+    if 'Datetime' in df.columns:
+        df = df.rename(columns={'Datetime': 'ds', 'Close': 'y'})
+    elif 'DATE' in df.columns:
+        df = df.rename(columns={'DATE': 'ds', 'Close': 'y'})
+
     # Check if 'ds' column contains datetime objects
     if isinstance(df['ds'].iloc[0], pd.Timestamp):
         df['ds'] = df['ds'].dt.tz_localize(None)  # Remove timezone information if present
