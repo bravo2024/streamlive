@@ -99,6 +99,8 @@ def main():
             forecast = predict(model, future)
             fig = display_results(df, forecast)
             st.plotly_chart(fig)
+            st.subheader("Actual and Predicted Values")
+            st.write(pd.concat([df['Date'], df['Close'], forecast[['ds', 'yhat']]], axis=1))
 
 if __name__ == "__main__":
     main()
