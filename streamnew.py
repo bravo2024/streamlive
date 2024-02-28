@@ -184,7 +184,7 @@ def apply_leading_indicators(df):
     # Example: Sell when SMA_20 crosses below EMA_50, RSI < 70, and MACD < Signal
     sell_condition = (df['SMA_20'] < df['EMA_50']) & (df['RSI_14'] < 70) & (df['MACD'] < df['MACD Signal'])
     df.loc[sell_condition, 'Signal'] = 'Sell'
-
+    st.write(df.tail(10))
     return df[['Date', 'Close', 'Signal']]  # Return DataFrame with Date, Close, and Signal columns
 
 # Assuming you already have a DataFrame named 'model
