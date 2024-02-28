@@ -268,7 +268,56 @@ def apply_leading_indicators(df):
     # Show the plot
     st.pyplot(fig)
 
+def generate_signal_plots(df):
+    """
+    Calculate leading indicators including SMA, EMA, RSI, MACD, and additional indicators suitable for smaller time frames.
+    Generate buy/sell signals based on indicator values.
+    Generate line plots for each indicator with buy/sell/hold signals.
 
+    Parameters:
+    - df (DataFrame): DataFrame containing historical stock data with 'Close' prices.
+
+    Returns:
+    - None
+    """
+    # Calculate indicators
+    df['SMA_20'] = ta.SMA(df['Close'], timeperiod=20)
+    df['EMA_50'] = ta.EMA(df['Close'], timeperiod=50)
+    df['RSI_14'] = ta.RSI(df['Close'], timeperiod=14)
+    df['MACD'], df['MACD_Signal'], _ = ta.MACD(df['Close'])
+
+    # Additional indicators suitable for smaller time frames
+    df['Stochastic'] = ta.STOCH(df['High'], df['Low'], df['Close'], fastk_period=14, slowk_period=3, slowd_period=3)[0]
+    df['CCI'] = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=20)
+    df['ATR'] = ta.ATR(df['High'], df['Low'], df['Close'], timeperiod=14)
+
+    # Generate buy/sell signals based on indicator values
+    df['Signal'] = 'Hold'
+    # Example: Buy when SMA_20 crosses above EMA_50, RSI > 30, and MACD > Signal
+    buy_condition = (df['SMA_20'] > df['EMA_50']) & (df['RSI_14'] > 30) & (df['MACD'] > df['MACD_Signal'])
+    df.loc[buy_condition, 'Signal'] = 'Buy'
+    # Example: Sell when SMA_20 crosses below EMA_50, RSI < 70, and MACD < Signal
+    sell_condition = (df['SMA_20'] < df['EMA_50']) & (df['RSI_14'] < 70) & (df['MACD'] < df['MACD_Signal'])
+    df.loc[sell_condition, 'Signal'] = 'Sell'
+
+    # Plot each indicator with buy/sell/hold signals
+    st.write("### Signal Plots")
+    for col in ['SMA_20', 'EMA_50', 'RSI_14', 'MACD', 'Stochastic', 'CCI', 'ATR']:
+        plt.figure(figsize=(10, 5))
+        plt.plot(df['Date'], df[col], label=col)
+        for index, row in df.iterrows():
+            if row['Signal'] == 'Buy':
+                plt.scatter(row['Date'], row[col], color='green', label='Buy', marker='^', s=100)
+            elif row['Signal'] == 'Sell':
+                plt.scatter(row['Date'], row[col], color='red', label='Sell', marker='v', s=100)
+            else:
+                plt.scatter(row['Date'], row[col], color='blue', label='Hold', marker='o', s=50)
+        plt.title(f'{col} with Buy/Sell/Hold Signals')
+        plt.xlabel('Date')
+        plt.ylabel(col)
+        plt.legend()
+        plt.xticks(rotation=45)
+        st.pyplot(plt)
 
 def main():
     st.title("Live Stock Analysis")
@@ -307,7 +356,7 @@ def main():
             display_last_values(df, forecast,future_periods,timeframe,model)
             # signal_table = apply_leading_indicators(df)
             # st.table(signal_table)
-            apply_leading_indicators(df)
+            generate_signal_plots(df)
             #signals = [
               ##  ('RSI', 'Sell'),
                # ('Moving Average', 'Buy'),
