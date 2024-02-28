@@ -85,6 +85,24 @@ def display_results(df, forecast):
     fig.update_layout(title='Actual vs. Predicted Closing Prices')
     return fig
 
+def display_values(df, forecast):
+    # Check if the DataFrame contains 'Date' or 'Datetime' column
+    date_column = 'Date' if 'Date' in df.columns else 'Datetime'
+    
+    # Create a DataFrame with 'Date' and 'Close' (actual) columns
+    actual_df = df[[date_column, 'Close']]
+    actual_df = actual_df.rename(columns={date_column: 'Date', 'Close': 'Actual'})
+    
+    # Merge the actual and predicted values based on the 'ds' column
+    merged_df = pd.merge(actual_df, forecast[['ds', 'yhat']], how='outer', left_on='Date', right_on='ds')
+    merged_df = merged_df.set_index('Date')
+    
+    # Display the merged DataFrame
+    st.write(merged_df)
+
+
+
+
 def main():
     st.title("Live Stock Analysis")
     symbol = st.text_input("Enter Stock Symbol (e.g., AAPL for Apple Inc.):")
@@ -99,8 +117,8 @@ def main():
             forecast = predict(model, future)
             fig = display_results(df, forecast)
             st.plotly_chart(fig)
-            st.subheader("Actual and Predicted Values")
-            st.write(pd.concat([df[0], df['Close'], forecast[['ds', 'yhat']]], axis=1))
+            st.subheader('Actual vs. Predicted Values')
+            display_values(df, forecast)
 
 if __name__ == "__main__":
     main()
