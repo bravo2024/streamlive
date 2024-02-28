@@ -168,7 +168,7 @@ def display_last_values(df, forecast, future_periods, timeframe,model):
     st.subheader(f'Future {future_periods} Predicted Closing Values')
     st.write(future_predicted)
 
-
+"""
 def apply_leading_indicators(df):
     # Calculate indicators
     df['SMA_20'] = ta.SMA(df['Close'], timeperiod=20)
@@ -188,8 +188,69 @@ def apply_leading_indicators(df):
     return df[['Close', 'Signal','SMA_20','RSI_14']]  # Return DataFrame with Date, Close, and Signal columns
 
 # Assuming you already have a DataFrame named 'model
+"""
+def apply_leading_indicators(df):
+    """
+    Calculate leading indicators including SMA, EMA, RSI, MACD, and additional indicators suitable for smaller time frames.
+    Generate buy/sell signals based on indicator values.
 
+    Parameters:
+    - df (DataFrame): DataFrame containing historical stock data with 'Close' prices.
 
+    Returns:
+    - DataFrame: DataFrame with added indicators, buy/sell signals, and their values.
+    """
+    # Calculate indicators
+    df['SMA_20'] = ta.SMA(df['Close'], timeperiod=20)
+    df['EMA_50'] = ta.EMA(df['Close'], timeperiod=50)
+    df['RSI_14'] = ta.RSI(df['Close'], timeperiod=14)
+    df['MACD'], df['MACD_Signal'], _ = ta.MACD(df['Close'])
+
+    # Additional indicators suitable for smaller time frames
+    df['Stochastic'] = ta.STOCH(df['High'], df['Low'], df['Close'], fastk_period=14, slowk_period=3, slowd_period=3)[0]
+    df['CCI'] = ta.CCI(df['High'], df['Low'], df['Close'], timeperiod=20)
+    df['ATR'] = ta.ATR(df['High'], df['Low'], df['Close'], timeperiod=14)
+
+    # Generate buy/sell signals based on indicator values
+    df['Signal_SMA_20'] = 'Hold'
+    df['Signal_EMA_50'] = 'Hold'
+    df['Signal_RSI_14'] = 'Hold'
+    df['Signal_MACD'] = 'Hold'
+    df['Signal_Stochastic'] = 'Hold'
+    df['Signal_CCI'] = 'Hold'
+    df['Signal_ATR'] = 'Hold'
+    
+    # SMA_20 buy/sell signals
+    df.loc[df['Close'] > df['SMA_20'], 'Signal_SMA_20'] = 'Buy'
+    df.loc[df['Close'] < df['SMA_20'], 'Signal_SMA_20'] = 'Sell'
+    
+    # EMA_50 buy/sell signals
+    df.loc[df['Close'] > df['EMA_50'], 'Signal_EMA_50'] = 'Buy'
+    df.loc[df['Close'] < df['EMA_50'], 'Signal_EMA_50'] = 'Sell'
+    
+    # RSI_14 buy/sell signals
+    df.loc[df['RSI_14'] < 30, 'Signal_RSI_14'] = 'Buy'
+    df.loc[df['RSI_14'] > 70, 'Signal_RSI_14'] = 'Sell'
+    
+    # MACD buy/sell signals
+    df.loc[(df['MACD'] > df['MACD_Signal']) & (df['MACD'] > 0), 'Signal_MACD'] = 'Buy'
+    df.loc[(df['MACD'] < df['MACD_Signal']) & (df['MACD'] < 0), 'Signal_MACD'] = 'Sell'
+    
+    # Stochastic buy/sell signals
+    df.loc[df['Stochastic'] < 20, 'Signal_Stochastic'] = 'Buy'
+    df.loc[df['Stochastic'] > 80, 'Signal_Stochastic'] = 'Sell'
+    
+    # CCI buy/sell signals
+    df.loc[df['CCI'] < -100, 'Signal_CCI'] = 'Buy'
+    df.loc[df['CCI'] > 100, 'Signal_CCI'] = 'Sell'
+    
+    # ATR buy/sell signals
+    df.loc[df['Close'] > df['Close'].shift(1) + df['ATR'] * 0.5, 'Signal_ATR'] = 'Buy'
+    df.loc[df['Close'] < df['Close'].shift(1) - df['ATR'] * 0.5, 'Signal_ATR'] = 'Sell'
+
+    return df[['Close', 'SMA_20', 'EMA_50', 'RSI_14', 'MACD', 'MACD_Signal', 'Stochastic', 'CCI', 'ATR',
+               'Signal_SMA_20', 'Signal_EMA_50', 'Signal_RSI_14', 'Signal_MACD', 'Signal_Stochastic',
+               'Signal_CCI', 'Signal_ATR']]
 
 
 def main():
