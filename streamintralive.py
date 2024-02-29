@@ -4,20 +4,18 @@ import pandas as pd
 from prophet import Prophet
 import plotly.graph_objects as go
 import yfinance as yf
-import talib as ta
 import pytz
 
 # Load stock data using Yahoo Finance
-def load_data(symbol, timeframe, periods=30, market_timezone='UTC'):
-    # Convert end date to the specified market timezone
-    end_date_utc = datetime.now(pytz.utc)
-    end_date_market = end_date_utc.astimezone(pytz.timezone(market_timezone))
-
+def load_data(symbol, timeframe, periods=30, timezone='UTC'):
+    # Convert end date to the specified timezone
+    end_date = datetime.now(pytz.timezone(timezone))
+    
     # Adjust start date accordingly
-    start_date_market = calculate_start_date(timeframe, periods, end_date_market)
-
+    start_date = calculate_start_date(timeframe, periods, end_date)
+    
     # Load data using adjusted start and end dates
-    data = yf.download(symbol, start=start_date_market, end=end_date_market, interval=timeframe)
+    data = yf.download(symbol, start=start_date, end=end_date, interval=timeframe)
     return data
 
 # Calculate start date based on timeframe and periods
@@ -94,10 +92,10 @@ def main():
     symbol = st.selectbox("Select Stock Symbol", symbols)
     timeframe = st.selectbox("Select Timeframe", ['1m', '5m', '15m', '30m', '1h', '1d', '1wk', '1mo'])
     future_periods = st.slider("Select Number of Future Periods", min_value=1, max_value=365, value=10)
-    market_timezone = st.selectbox("Select Market Timezone", ['UTC', 'Asia/Kolkata', 'America/New_York', 'Europe/London'])
+    timezone = st.selectbox("Select Timezone", pytz.all_timezones)
 
     if symbol:
-        df = load_data(symbol, timeframe, market_timezone=market_timezone)  
+        df = load_data(symbol, timeframe, timezone=timezone)  
         if not df.empty:
             model = train_model(df)
             future = model.make_future_dataframe(periods=future_periods)
