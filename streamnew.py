@@ -33,7 +33,7 @@ def load_data(symbol, timeframe, num_days=30):
     #df = yf.download(symbol, start=start_date, end=end_date, interval=timeframe)
     #data.index = data.index.tz_localize('UTC').tz_convert('Asia/Kolkata')
     # Reset index for compatibility with Prophet
-    data.reset_index(inplace=True)
+    #data.reset_index(inplace=True)
 
     return data
     
