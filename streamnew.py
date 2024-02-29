@@ -15,7 +15,7 @@ from pytz import timezone
 # Function to load stock data using Yahoo Finance
 # Function to load stock data using Yahoo Finance
 # Function to load stock data using Yahoo Finance
-def load_data(symbol, timeframe, num_days=30):
+def load_data(symbol, timeframe, periods=30):
     end_date = datetime.now()
     if timeframe in ['1m', '5m', '15m', '30m', '1h']:  # Intraday timeframes
         start_date = end_date - timedelta(days=1)  # 1 day of data
