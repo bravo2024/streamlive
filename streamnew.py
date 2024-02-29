@@ -113,14 +113,12 @@ def display_results(df, forecast):
     #st.subheader('Last 10 Predicted Values')
     #st.write(forecast[['ds', 'yhat']].tail(10))
     ##return fig
-    market_timezone = pd.Timestamp(df.index[0]).tz
-    if market_timezone is None:
-        # If timezone is not specified in the data, assume UTC
-        market_timezone = 'UTC+5.30'
+    market_open_time = pd.Timestamp('09:30').time()  # Market open time (e.g., 9:30 AM)
+    market_close_time = pd.Timestamp('16:00').time()  # Market close time (e.g., 4:00 PM)
 
-    # Convert timestamps to the market's timezone
-    df.index = df.index.tz_localize('UTC').tz_convert(market_timezone)
-    forecast['ds'] = forecast['ds'].dt.tz_localize('UTC').dt.tz_convert(market_timezone)
+    # Filter out data for non-trading hours
+    df = df.between_time(market_open_time, market_close_time)
+    forecast = forecast[(forecast['ds'].dt.time >= market_open_time) & (forecast['ds'].dt.time <= market_close_time)]
 
     fig = go.Figure()
     fig.add_trace(go.Candlestick(x=df.index, open=df['Open'], high=df['High'], low=df['Low'], close=df['Close'], name='Actual'))
