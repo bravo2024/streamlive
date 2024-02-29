@@ -16,7 +16,7 @@ from pytz import timezone
 # Function to load stock data using Yahoo Finance
 # Function to load stock data using Yahoo Finance
 def load_data(symbol, timeframe, num_days=30):
-    end_date = datetime.now()
+    end_date = datetime.now(pytz.utc)
     if timeframe in ['1m', '5m', '15m', '30m', '1h']:  # Intraday timeframes
         start_date = end_date - timedelta(days=100)  # 1 day of data
     elif timeframe == '1d':
@@ -31,9 +31,9 @@ def load_data(symbol, timeframe, num_days=30):
     #end_date = datetime.now()
     #start_date = end_date - timedelta(days=num_days)
     #df = yf.download(symbol, start=start_date, end=end_date, interval=timeframe)
-    data.index = data.index.tz_localize('UTC').tz_convert('Asia/Kolkata')
+    #data.index = data.index.tz_localize('UTC').tz_convert('Asia/Kolkata')
     # Reset index for compatibility with Prophet
-    #data.reset_index(inplace=True)
+    data.reset_index(inplace=True)
 
     return data
     
