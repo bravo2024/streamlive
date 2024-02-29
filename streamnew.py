@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 # Function to load stock data using Yahoo Finance
 # Function to load stock data using Yahoo Finance
 # Function to load stock data using Yahoo Finance
-def load_data(symbol, timeframe, periods):
+def load_data(symbol, timeframe, periods=100):
     end_date = datetime.now()
     #if timeframe in ['1m', '5m', '15m', '30m', '1h']:  # Intraday timeframes
      #   start_date = end_date - timedelta(days=100)  # 1 day of data
@@ -368,10 +368,10 @@ def main():
     future_periods = st.slider("Select Number of Future Periods", min_value=1, max_value=365, value=10)
 
     if symbol:
-        df = load_data(symbol, timeframe, periods=100)  # Ensure at least 100 historical data points
+        df = load_data(symbol, timeframe)  # Ensure at least 100 historical data points
         if not df.empty:
             model = train_model(df)
-            future = model.make_future_dataframe(periods=future_periods, freq='D' if timeframe in ['1d', '1wk', '1mo'] else 'T')
+            future = model.make_future_dataframe(periods=future_periods)
             forecast = predict(model, future)
             fig = display_results(df, forecast)
             st.plotly_chart(fig)
