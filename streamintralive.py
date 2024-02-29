@@ -38,7 +38,7 @@ def train_model(df):
 
 # Prepare DataFrame for Prophet model
 def prepare_dataframe(df):
-  if 'Datetime' in df.columns:
+    if 'Datetime' in df.columns:
         df = df.rename(columns={'Datetime': 'ds', 'Close': 'y'})
     elif 'Date' in df.columns:
         df = df.rename(columns={'Date': 'ds', 'Close': 'y'})
