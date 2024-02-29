@@ -16,29 +16,29 @@ import matplotlib.pyplot as plt
 # Function to load stock data using Yahoo Finance
 def load_data(symbol, timeframe, num_days=30):
     end_date = datetime.now()
-    #if timeframe in ['1m', '5m', '15m', '30m', '1h']:  # Intraday timeframes
-     #   start_date = end_date - timedelta(days=100)  # 1 day of data
-    #elif timeframe == '1d':
-     #   start_date = end_date - timedelta(days=periods)  # Number of days selected by the user
-    #elif timeframe == '1wk':
-     #   start_date = end_date - timedelta(weeks=periods)  # Number of weeks selected by the user
-    #elif timeframe == '1mo':
-     #   start_date = end_date - relativedelta(months=periods)  # Number of months selected by the user
+    if timeframe in ['1m', '5m', '15m', '30m', '1h']:  # Intraday timeframes
+        start_date = end_date - timedelta(days=100)  # 1 day of data
+    elif timeframe == '1d':
+        start_date = end_date - timedelta(days=periods)  # Number of days selected by the user
+    elif timeframe == '1wk':
+        start_date = end_date - timedelta(weeks=periods)  # Number of weeks selected by the user
+    elif timeframe == '1mo':
+        start_date = end_date - relativedelta(months=periods)  # Number of months selected by the user
     
     
-    #data = yf.download(symbol, start=start_date, end=end_date, interval=timeframe)
-    end_date = datetime.now()
-    start_date = end_date - timedelta(days=num_days)
-    df = yf.download(symbol, start=start_date, end=end_date, interval=timeframe)
+    data = yf.download(symbol, start=start_date, end=end_date, interval=timeframe)
+    #end_date = datetime.now()
+    #start_date = end_date - timedelta(days=num_days)
+    #df = yf.download(symbol, start=start_date, end=end_date, interval=timeframe)
 
     # Reset index for compatibility with Prophet
-    df.reset_index(inplace=True)
+    data.reset_index(inplace=True)
 
-    return df
+    return data
     
     
     
-    return df
+    #return df
 
 
 
