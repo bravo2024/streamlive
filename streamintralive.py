@@ -38,21 +38,21 @@ def train_model(df):
 
 # Prepare DataFrame for Prophet model
 def prepare_dataframe(df):
-    if 'Datetime' in df.columns:
+  if 'Datetime' in df.columns:
         df = df.rename(columns={'Datetime': 'ds', 'Close': 'y'})
     elif 'Date' in df.columns:
         df = df.rename(columns={'Date': 'ds', 'Close': 'y'})
     else:
         st.error("DataFrame must contain either 'Datetime' or 'Date' column.")
-        return None
+        return pd.DataFrame()
     
     if 'ds' not in df.columns:
         st.error("DataFrame must contain a 'ds' column.")
-        return None
+        return pd.DataFrame()
     
     if 'Close' not in df.columns:
         st.error("DataFrame must contain a 'Close' column.")
-        return None
+        return pd.DataFrame()
     
     if isinstance(df['ds'].iloc[0], pd.Timestamp):
         df['ds'] = df['ds'].dt.tz_localize(None)
