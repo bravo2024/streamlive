@@ -102,18 +102,31 @@ def display_results(df, forecast):
     #fig.add_trace(go.Scatter(x=forecast['ds'], y=forecast['yhat'], mode='lines', name='Predicted'))
     #fig.update_layout(title='Actual vs. Predicted Closing Prices')
 
-    fig = go.Figure()
-    fig.add_trace(go.Candlestick(x=df.index, open=df['Open'], high=df['High'], low=df['Low'], close=df['Close'], name='Actual'))
-    fig.add_trace(go.Scatter(x=forecast['ds'], y=forecast['yhat'], mode='lines', name='Predicted'))
-    fig.update_layout(title='Actual vs. Predicted Closing Prices')
+   # #fig = go.Figure()
+    ##fig.add_trace(go.Candlestick(x=df.index, open=df['Open'], high=df['High'], low=df['Low'], close=df['Close'], name='Actual'))
+   # #fig.add_trace(go.Scatter(x=forecast['ds'], y=forecast['yhat'], mode='lines', name='Predicted'))
+   # #fig.update_layout(title='Actual vs. Predicted Closing Prices')
     #st.plotly_chart(fig)
     #st.subheader('Last 10 Actual Values')
     #st.write(df.tail(10))
 
     #st.subheader('Last 10 Predicted Values')
     #st.write(forecast[['ds', 'yhat']].tail(10))
-    return fig
+    ##return fig
+    market_timezone = pd.Timestamp(df.index[0]).tz
+    if market_timezone is None:
+        # If timezone is not specified in the data, assume UTC
+        market_timezone = 'UTC'
 
+    # Convert timestamps to the market's timezone
+    df.index = df.index.tz_localize('UTC').tz_convert(market_timezone)
+    forecast['ds'] = forecast['ds'].dt.tz_localize('UTC').dt.tz_convert(market_timezone)
+
+    fig = go.Figure()
+    fig.add_trace(go.Candlestick(x=df.index, open=df['Open'], high=df['High'], low=df['Low'], close=df['Close'], name='Actual'))
+    fig.add_trace(go.Scatter(x=forecast['ds'], y=forecast['yhat'], mode='lines', name='Predicted'))
+    fig.update_layout(title='Actual vs. Predicted Closing Prices')
+    return fig
 
 #def display_last_values(df, forecast, future_periods):
     # Extract future predicted closing prices
