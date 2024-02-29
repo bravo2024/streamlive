@@ -7,6 +7,7 @@ import yfinance as yf
 import numpy as np
 import talib as ta
 import matplotlib.pyplot as plt
+from pytz import timezone
 
 
 
@@ -30,9 +31,9 @@ def load_data(symbol, timeframe, num_days=30):
     #end_date = datetime.now()
     #start_date = end_date - timedelta(days=num_days)
     #df = yf.download(symbol, start=start_date, end=end_date, interval=timeframe)
-
+    data.index = data.index.tz_localize('UTC').tz_convert('Asia/Kolkata')
     # Reset index for compatibility with Prophet
-    data.reset_index(inplace=True)
+    #data.reset_index(inplace=True)
 
     return data
     
