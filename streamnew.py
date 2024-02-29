@@ -109,12 +109,15 @@ def display_results(df, forecast):
     #st.plotly_chart(fig)
     #st.subheader('Last 10 Actual Values')
     #st.write(df.tail(10))
-    market_open_time = pd.Timestamp('09:30').time()  # Market open time (e.g., 9:30 AM)
+    market_open_time = pd.Timestamp('09:10').time()  # Market open time (e.g., 9:30 AM)
     market_close_time = pd.Timestamp('16:00').time()  # Market close time (e.g., 4:00 PM)
 
     # Filter out data for non-trading hours
     df = df.between_time(market_open_time, market_close_time)
+    
+    # Truncate forecast data to end at market close time
     forecast = forecast[(forecast['ds'].dt.time >= market_open_time) & (forecast['ds'].dt.time <= market_close_time)]
+    forecast = forecast[forecast['ds'].dt.time <= market_close_time]
 
     fig = go.Figure()
     fig.add_trace(go.Candlestick(x=df.index, open=df['Open'], high=df['High'], low=df['Low'], close=df['Close'], name='Actual'))
