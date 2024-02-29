@@ -116,7 +116,7 @@ def display_results(df, forecast):
     market_timezone = pd.Timestamp(df.index[0]).tz
     if market_timezone is None:
         # If timezone is not specified in the data, assume UTC
-        market_timezone = 'UTC'
+        market_timezone = 'UTC+5.30'
 
     # Convert timestamps to the market's timezone
     df.index = df.index.tz_localize('UTC').tz_convert(market_timezone)
