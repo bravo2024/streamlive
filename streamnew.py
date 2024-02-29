@@ -109,23 +109,26 @@ def display_results(df, forecast):
     #st.plotly_chart(fig)
     #st.subheader('Last 10 Actual Values')
     #st.write(df.tail(10))
-    last_actual_date = df.index[-1]
-    
-    # Get the first forecast date from the index
-    first_forecast_date = forecast.index[0]
-    
-    # Create a new DataFrame with the concatenated dates and closing prices
-    continuous_df = pd.DataFrame({
-        'Date': [last_actual_date, first_forecast_date],
-        'Close': [df.loc[last_actual_date, 'Close'], forecast.loc[first_forecast_date, 'yhat']]
-    })
-    
-    # Plot the continuous graph
     fig = go.Figure()
-    fig.add_trace(go.Scatter(x=df.index, y=df['Close'], mode='lines', name='Actual'))
-    fig.add_trace(go.Scatter(x=continuous_df['Date'], y=continuous_df['Close'], mode='lines', name='Continuous'))
-    fig.add_trace(go.Scatter(x=forecast.index, y=forecast['yhat'], mode='lines', name='Predicted'))
-    fig.update_layout(title='Actual vs. Predicted Closing Prices')
+
+    # Adding actual candlestick data
+    fig.add_trace(go.Candlestick(x=df.index,
+                    open=df['Open'],
+                    high=df['High'],
+                    low=df['Low'],
+                    close=df['Close'], name='Actual'))
+
+    # Adding predicted closing prices
+    fig.add_trace(go.Scatter(x=forecast['ds'], y=forecast['yhat'], mode='lines', name='Predicted'))
+
+    # Update layout for better visuals
+    fig.update_layout(
+        title='Actual vs. Predicted Closing Prices',
+        xaxis_title='Date',
+        yaxis_title='Price',
+        legend_title='Data',
+        xaxis_rangeslider_visible=False  # Disable range slider for better visuals
+    )
     return fig
 
     
