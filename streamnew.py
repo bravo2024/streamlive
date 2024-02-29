@@ -18,7 +18,7 @@ from pytz import timezone
 def load_data(symbol, timeframe, num_days=30):
     end_date = datetime.now()
     if timeframe in ['1m', '5m', '15m', '30m', '1h']:  # Intraday timeframes
-        start_date = end_date - timedelta(days=7)  # 1 day of data
+        start_date = end_date - timedelta(days=1)  # 1 day of data
     elif timeframe == '1d':
         start_date = end_date - timedelta(days=periods)  # Number of days selected by the user
     elif timeframe == '1wk':
