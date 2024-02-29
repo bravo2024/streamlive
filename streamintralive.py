@@ -42,10 +42,23 @@ def prepare_dataframe(df):
         df = df.rename(columns={'Datetime': 'ds', 'Close': 'y'})
     elif 'Date' in df.columns:
         df = df.rename(columns={'Date': 'ds', 'Close': 'y'})
+    else:
+        st.error("DataFrame must contain either 'Datetime' or 'Date' column.")
+        return None
+    
+    if 'ds' not in df.columns:
+        st.error("DataFrame must contain a 'ds' column.")
+        return None
+    
+    if 'Close' not in df.columns:
+        st.error("DataFrame must contain a 'Close' column.")
+        return None
+    
     if isinstance(df['ds'].iloc[0], pd.Timestamp):
         df['ds'] = df['ds'].dt.tz_localize(None)
     else:
         df['ds'] = pd.to_datetime(df['ds'])
+    
     return df
 
 # Make predictions with Prophet model
