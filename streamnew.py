@@ -109,7 +109,7 @@ def display_results(df, forecast):
     #st.plotly_chart(fig)
     #st.subheader('Last 10 Actual Values')
     #st.write(df.tail(10))
-    market_open_time = pd.Timestamp('09:10').time()  # Market open time (e.g., 9:30 AM)
+    market_open_time = pd.Timestamp('09:30').time()  # Market open time (e.g., 9:30 AM)
     market_close_time = pd.Timestamp('16:00').time()  # Market close time (e.g., 4:00 PM)
 
     # Filter out data for non-trading hours
@@ -119,12 +119,28 @@ def display_results(df, forecast):
     forecast = forecast[(forecast['ds'].dt.time >= market_open_time) & (forecast['ds'].dt.time <= market_close_time)]
     forecast = forecast[forecast['ds'].dt.time <= market_close_time]
 
+    # Check if the last data point in the actual data and the first data point in the forecast data are from different days
+    last_market_date = df.index[-1].date()
+    first_forecast_date = forecast['ds'].iloc[0].date()
+    if last_market_date != first_forecast_date:
+        # Find the last data point in the actual data for the market day
+        last_market_data = df.loc[df.index.date == last_market_date].iloc[-1]
+        # Find the first data point in the forecast data for the next market day
+        first_forecast_data = forecast.loc[forecast['ds'].dt.date == first_forecast_date].iloc[0]
+        # Create a continuous line by setting the close price of the last market data point to the open price of the first forecast data point
+        continuous_data = pd.DataFrame({
+            'Open': [last_market_data['Close']],
+            'High': [max(last_market_data['Close'], first_forecast_data['Close'])],
+            'Low': [min(last_market_data['Close'], first_forecast_data['Close'])],
+            'Close': [first_forecast_data['Close']]
+        }, index=[last_market_data.name + pd.DateOffset(1)])
+        df = pd.concat([df, continuous_data])
+
     fig = go.Figure()
     fig.add_trace(go.Candlestick(x=df.index, open=df['Open'], high=df['High'], low=df['Low'], close=df['Close'], name='Actual'))
     fig.add_trace(go.Scatter(x=forecast['ds'], y=forecast['yhat'], mode='lines', name='Predicted'))
     fig.update_layout(title='Actual vs. Predicted Closing Prices')
     return fig
-
 
     
     #st.subheader('Last 10 Predicted Values')
