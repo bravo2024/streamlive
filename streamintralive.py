@@ -55,7 +55,7 @@ def load_data(symbol, timeframe, periods=30, timezone='UTC'):
         raise ValueError("Missing 'Close' column in the downloaded data.")
     if not any(col in data.columns for col in ['Date', 'Datetime']):
         raise ValueError("Expected a 'Date' or 'Datetime' column in the data.")
-
+    print(data)
     return data
 
 # Calculate start date based on timeframe and periods
