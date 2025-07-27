@@ -9,19 +9,57 @@ import yfinance as yf
 # Function to load stock data using Yahoo Finance
 # Function to load stock data using Yahoo Finance
 # Function to load stock data using Yahoo Finance
+# def load_data(symbol, timeframe, periods):
+#     end_date = datetime.now()
+#     if timeframe in ['1m', '5m', '15m', '30m', '1h']:  # Intraday timeframes
+#         start_date = end_date - timedelta(days=1)  # 1 day of data
+#     elif timeframe == '1d':
+#         start_date = end_date - timedelta(days=periods)  # Number of days selected by the user
+#     elif timeframe == '1wk':
+#         start_date = end_date - timedelta(weeks=periods)  # Number of weeks selected by the user
+#     elif timeframe == '1mo':
+#         start_date = end_date - relativedelta(months=periods)  # Number of months selected by the user
+    
+#     data = yf.download(symbol, start=start_date, end=end_date, interval=timeframe)
+#     return data
+from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
+import yfinance as yf
+import pandas as pd
+
 def load_data(symbol, timeframe, periods):
     end_date = datetime.now()
-    if timeframe in ['1m', '5m', '15m', '30m', '1h']:  # Intraday timeframes
-        start_date = end_date - timedelta(days=1)  # 1 day of data
+
+    # Determine start date based on timeframe
+    if timeframe in ['1m', '5m', '15m', '30m', '1h']:
+        start_date = end_date - timedelta(days=1)
     elif timeframe == '1d':
-        start_date = end_date - timedelta(days=periods)  # Number of days selected by the user
+        start_date = end_date - timedelta(days=periods)
     elif timeframe == '1wk':
-        start_date = end_date - timedelta(weeks=periods)  # Number of weeks selected by the user
+        start_date = end_date - timedelta(weeks=periods)
     elif timeframe == '1mo':
-        start_date = end_date - relativedelta(months=periods)  # Number of months selected by the user
-    
-    data = yf.download(symbol, start=start_date, end=end_date, interval=timeframe)
-    return data
+        start_date = end_date - relativedelta(months=periods)
+    else:
+        raise ValueError("Unsupported timeframe")
+
+    # Download data
+    df = yf.download(symbol, start=start_date, end=end_date, interval=timeframe)
+
+    # If MultiIndex (happens with single/multiple symbols), flatten
+    if isinstance(df.columns, pd.MultiIndex):
+        df.columns = df.columns.get_level_values(0)
+
+    # Reset index to make 'Date' or 'Datetime' a column
+    df.reset_index(inplace=True)
+
+    # Validate required columns
+    required_cols = ['Close']
+    for col in required_cols:
+        if col not in df.columns:
+            raise ValueError(f"'{col}' column is missing from data")
+
+    # Return cleaned DataFrame
+    return df
 
 
 
