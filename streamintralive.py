@@ -37,7 +37,7 @@ def load_data(symbol, timeframe, periods=30, timezone='UTC'):
     
     # Download data from Yahoo Finance
     data = yf.download(symbol, start=start_date, end=end_date, interval=timeframe)
-
+    print(data.head(20))
     # If the data has MultiIndex columns (e.g., from multiple tickers), flatten it
     if isinstance(data.columns, pd.MultiIndex):
         data.columns = data.columns.get_level_values(0)
