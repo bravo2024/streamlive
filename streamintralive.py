@@ -19,7 +19,7 @@ import pytz
 #     return data
 
 
-def load_data(symbol, timeframe, periods=30):
+def load_data(symbol, timeframe, periods=30, timezone='UTC'):
     # Current time in UTC
     end_date = datetime.now()
     
