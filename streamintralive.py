@@ -7,15 +7,55 @@ import yfinance as yf
 import pytz
 
 # Load stock data using Yahoo Finance
-def load_data(symbol, timeframe, periods=30, timezone='UTC'):
-    # Convert end date to the specified timezone
-    end_date = datetime.now(pytz.timezone(timezone))
+# def load_data(symbol, timeframe, periods=30, timezone='UTC'):
+#     # Convert end date to the specified timezone
+#     end_date = datetime.now(pytz.timezone(timezone))
     
-    # Adjust start date accordingly
-    start_date = calculate_start_date(timeframe, periods, end_date)
+#     # Adjust start date accordingly
+#     start_date = calculate_start_date(timeframe, periods, end_date)
     
-    # Load data using adjusted start and end dates
+#     # Load data using adjusted start and end dates
+#     data = yf.download(symbol, start=start_date, end=end_date, interval=timeframe)
+#     return data
+
+
+def load_data(symbol, timeframe, periods=30):
+    # Current time in UTC
+    end_date = datetime.now()
+    
+    # Determine start_date based on timeframe and period count
+    if timeframe in ['1m', '5m', '15m', '30m', '1h']:  # Intraday (Yahoo limits to 7 days max)
+        start_date = end_date - timedelta(days=1)
+    elif timeframe == '1d':
+        start_date = end_date - timedelta(days=periods)
+    elif timeframe == '1wk':
+        start_date = end_date - timedelta(weeks=periods)
+    elif timeframe == '1mo':
+        start_date = end_date - relativedelta(months=periods)
+    else:
+        raise ValueError(f"Unsupported timeframe: {timeframe}")
+    
+    # Download data from Yahoo Finance
     data = yf.download(symbol, start=start_date, end=end_date, interval=timeframe)
+
+    # If the data has MultiIndex columns (e.g., from multiple tickers), flatten it
+    if isinstance(data.columns, pd.MultiIndex):
+        data.columns = data.columns.get_level_values(0)
+
+    # Convert timezone from UTC to IST (Asia/Kolkata)
+    if data.index.tz is None:
+        data.index = data.index.tz_localize('UTC')
+    data.index = data.index.tz_convert('Asia/Kolkata')
+
+    # Reset index so datetime is a column
+    data.reset_index(inplace=True)
+
+    # Validate essential columns
+    if 'Close' not in data.columns:
+        raise ValueError("Missing 'Close' column in the downloaded data.")
+    if not any(col in data.columns for col in ['Date', 'Datetime']):
+        raise ValueError("Expected a 'Date' or 'Datetime' column in the data.")
+
     return data
 
 # Calculate start date based on timeframe and periods
